@@ -1,4 +1,4 @@
-﻿# UrbanAir AI — Environmental Intelligence for Sustainable Cities
+# UrbanAir AI — Environmental Intelligence for Sustainable Cities
 
 **Tagline:** "Understand Your City's Air."  
 **SDG Focus:** UN SDG 11 (Sustainable Cities and Communities) — Target 11.6 & Indicator 11.6.2  
@@ -22,7 +22,7 @@ UrbanAir AI strictly separates raw physical telemetry from artificial intelligen
                                    ↓
                     ┌──────────────┴──────────────┐
                     ↓                             ↓
-            RAG KNOWLEDGE RETRIEVAL        GEMINI 1.5 FLASH /
+            RAG KNOWLEDGE RETRIEVAL        GEMINI 2.5 FLASH /
             (WHO, EPA, UN SDG 11)          KNOWLEDGE ENGINE
                     ↓                             ↓
                     └──────────────┬──────────────┘
@@ -37,7 +37,8 @@ UrbanAir AI strictly separates raw physical telemetry from artificial intelligen
   - `151–200`: **Unhealthy**
   - `201–300`: **Very Unhealthy**
   - `301–500`: **Hazardous**
-- **AI Role:** The AI model (Gemini 1.5 Flash or Deterministic Reference Fallback) **never generates or modifies numbers**; it only interprets verified measurements and cites reputable knowledge sources.
+- **AI Role:** The AI model (Gemini 2.5 Flash or Deterministic Reference Fallback) **never generates or modifies numbers**; it only interprets verified measurements and cites reputable knowledge sources.
+
 
 ---
 
