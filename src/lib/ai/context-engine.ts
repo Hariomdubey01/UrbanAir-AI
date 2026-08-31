@@ -88,7 +88,8 @@ export async function generateAIExplanation(input: AIContextInput): Promise<AIRe
   if (apiKey && apiKey.trim() !== '') {
     try {
       const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+      const model = genAI.getGenerativeModel({ model: 'gemini-3.6-flash' });
+
 
 
       const prompt = `You are UrbanAir AI, an authoritative environmental intelligence assistant focused on SDG 11.
@@ -142,8 +143,9 @@ System Rules:
         explainability: {
           ...validated.explainability,
           aiTask: 'Environmental explanation',
-          aiMode: 'Gemini 2.5 Flash + RAG',
+          aiMode: 'Gemini 3.6 Flash + RAG',
           limitations: validated.limitations,
+
 
         }
       };

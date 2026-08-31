@@ -136,8 +136,9 @@ export function validateAIResponseContract(params: {
       dataUsed: dataUsedBadges,
       dataSource: source,
       aqiStandard,
-      aiMode: mode === 'gemini-rag' ? 'Gemini 2.5 Flash + RAG' : 'Deterministic Knowledge Engine',
+      aiMode: mode === 'gemini-rag' ? 'Gemini 3.6 Flash + RAG' : 'Deterministic Knowledge Engine',
       metricsEvaluated: {
+
 
         aqi: effectiveAQ.aqi,
         category: effectiveAQ.category,
