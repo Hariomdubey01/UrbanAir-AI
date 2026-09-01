@@ -15,7 +15,37 @@ export interface AIContextInput {
   topic?: string;
 }
 
+// Helper: Bounded Timeout for Gemini API calls
+function generateContentWithTimeout(model: any, prompt: string, timeoutMs: number = 12000): Promise<any> {
+  return Promise.race([
+    model.generateContent(prompt),
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('GEMINI_TIMEOUT: Request exceeded 12s bounded threshold')), timeoutMs)
+    ),
+  ]);
+}
+
+// Helper: Classify transient errors for 1-time retry
+function isTransientGeminiError(err: any): boolean {
+  const errMsg = String(err?.message || err || '').toLowerCase();
+  const errStatus = err?.status || err?.statusCode || 0;
+
+  if (errMsg.includes('timeout') || errMsg.includes('econnreset') || errMsg.includes('etimedout') || errMsg.includes('fetch failed')) {
+    return true;
+  }
+  if (errStatus === 429 || (errStatus >= 500 && errStatus <= 504)) {
+    return true;
+  }
+  return false;
+}
+
+function delay(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 export async function generateAIExplanation(input: AIContextInput): Promise<AIResponseData> {
+  const startTime = Date.now();
+  const requestId = `req-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
   const { question, airQuality, compareAirQuality, locationName, conversationLocationName, topic } = input;
   const nowStr = new Date().toISOString();
 
@@ -72,18 +102,6 @@ export async function generateAIExplanation(input: AIContextInput): Promise<AIRe
 
   const isComparisonQuery = intentData.intent === 'CITY_COMPARISON' && Boolean(compA && compB);
 
-  // Debug Log
-  if (process.env.NODE_ENV !== 'production') {
-    console.log('[AGENT CONTEXT ENGINE]', {
-      userQuery: question,
-      intent: intentData.intent,
-      extractedLocations: intentData.extractedLocationNames,
-      selectedLocation: locationName || airQuality?.location.name,
-      effectiveLocation: effectiveLoc.name,
-      isComparison: isComparisonQuery,
-    });
-  }
-
   // 4. Retrieve RAG Knowledge Base Documents
   const searchTerms = [
     question,
@@ -96,17 +114,21 @@ export async function generateAIExplanation(input: AIContextInput): Promise<AIRe
 
   const retrievedDocs = retrieveKnowledgeDocs(searchTerms, 3);
 
-  // 5. Gemini LLM Mode (Server-side API Integration)
+  // 5. Attempt Gemini 3.6 Flash + RAG (Primary Intelligence Layer)
   const apiKey = process.env.GEMINI_API_KEY;
   if (apiKey && apiKey.trim() !== '') {
-    try {
-      const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: 'gemini-3.6-flash' });
+    let attempt = 0;
+    let geminiSuccess = false;
+    let geminiText = '';
+    let lastError: any = null;
 
-      let telemetryContext = '';
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: 'gemini-3.6-flash' });
 
-      if (isComparisonQuery && compA && compB) {
-        telemetryContext = `Structured Comparison Telemetry (US EPA Benchmark):
+    let telemetryContext = '';
+
+    if (isComparisonQuery && compA && compB) {
+      telemetryContext = `Structured Comparison Telemetry (US EPA Benchmark):
 City A: ${compA.location.name}, ${compA.location.country}
 - Air Quality Index (AQI): ${compA.aqi} (${compA.category})
 - Dominant Pollutant: ${compA.primaryPollutant}
@@ -126,8 +148,8 @@ City B: ${compB.location.name}, ${compB.location.country}
 - Ozone (O3): ${compB.pollutants.o3?.value ?? 'Unavailable'} µg/m³
 - SO2: ${compB.pollutants.so2?.value ?? 'Unavailable'} µg/m³
 - CO: ${compB.pollutants.co?.value ?? 'Unavailable'} µg/m³`;
-      } else {
-        telemetryContext = `Current Measured Environmental Telemetry for ${effectiveLoc.name}, ${effectiveLoc.country} (Open-Meteo US EPA Standard):
+    } else {
+      telemetryContext = `Current Measured Environmental Telemetry for ${effectiveLoc.name}, ${effectiveLoc.country} (Open-Meteo US EPA Standard):
 - Air Quality Index (AQI): ${effectiveAQ.aqi} (${effectiveAQ.category})
 - Dominant Pollutant: ${effectiveAQ.primaryPollutant}
 - PM2.5: ${effectiveAQ.pollutants.pm25?.value ?? 'Unavailable'} µg/m³
@@ -136,9 +158,9 @@ City B: ${compB.location.name}, ${compB.location.country}
 - Ozone (O3): ${effectiveAQ.pollutants.o3?.value ?? 'Unavailable'} µg/m³
 - SO2: ${effectiveAQ.pollutants.so2?.value ?? 'Unavailable'} µg/m³
 - CO: ${effectiveAQ.pollutants.co?.value ?? 'Unavailable'} µg/m³`;
-      }
+    }
 
-      const prompt = `You are UrbanAir AI, an authoritative environmental intelligence assistant focused on air quality, pollution, sustainable cities, and UN Sustainable Development Goal 11 (Target 11.6).
+    const prompt = `You are UrbanAir AI, an authoritative environmental intelligence assistant focused on air quality, pollution, sustainable cities, and UN Sustainable Development Goal 11 (Target 11.6).
 
 User Question: "${question}"
 Detected Intent: ${intentData.intent}
@@ -162,11 +184,29 @@ System Rules:
 10. NEVER provide individual medical diagnoses, personalised medical advice, or drug prescriptions. Provide only general environmental health awareness and advise consulting medical professionals for personal health symptoms.
 11. Answer the user's actual question directly rather than defaulting to a generic summary.`;
 
-      const result = await model.generateContent(prompt);
-      const text = result.response.text();
+    const geminiStartTime = Date.now();
 
+    while (attempt < 2 && !geminiSuccess) {
+      attempt++;
+      try {
+        const result = await generateContentWithTimeout(model, prompt, 12000);
+        geminiText = result.response.text();
+        geminiSuccess = true;
+      } catch (err: any) {
+        lastError = err;
+        if (attempt === 1 && isTransientGeminiError(err)) {
+          await delay(600); // Short backoff for transient error
+        } else {
+          break;
+        }
+      }
+    }
+
+    const geminiDurationMs = Date.now() - geminiStartTime;
+
+    if (geminiSuccess && geminiText) {
       const validated = validateAIResponseContract({
-        rawAnswer: text,
+        rawAnswer: geminiText,
         summary: isComparisonQuery && compA && compB
           ? `Comparative Air Analysis: ${compA.location.name} vs ${compB.location.name}`
           : `Air Quality Intelligence for ${effectiveLoc.name} (${effectiveAQ.category})`,
@@ -176,6 +216,9 @@ System Rules:
         requestedLocationName: resolvedLocContext.requestedLocationName,
         mode: 'gemini-rag',
       });
+
+      // Observability Log
+      console.log(`[AI_CHAT_OBSERVABILITY] requestId=${requestId} intent=${intentData.intent} geminiAttempt=${attempt} geminiDurationMs=${geminiDurationMs} totalDurationMs=${Date.now() - startTime} mode=gemini-rag`);
 
       return {
         ...validated,
@@ -189,13 +232,14 @@ System Rules:
           limitations: validated.limitations,
         }
       };
-    } catch (err) {
-      console.warn('Gemini API call failed, activating deterministic knowledge engine fallback:', err);
+    } else {
+      console.warn(`[AI_CHAT_RECOVERY] requestId=${requestId} Gemini failed (${lastError?.message || 'unknown error'}). Seamlessly switching to Deterministic Grounded Fallback.`);
     }
   }
 
-  // 6. Deterministic Knowledge Engine (Reliable Zero-Config Fallback)
+  // 6. Deterministic Grounded Knowledge Engine (Reliable Zero-Failure Fallback)
   if (isComparisonQuery && compA && compB) {
+    console.log(`[AI_CHAT_OBSERVABILITY] requestId=${requestId} intent=CITY_COMPARISON mode=knowledge-fallback totalDurationMs=${Date.now() - startTime}`);
     return buildComparisonResponse(compA, compB, question, retrievedDocs);
   }
 
@@ -216,6 +260,8 @@ System Rules:
     requestedLocationName: resolvedLocContext.requestedLocationName,
     mode: 'knowledge-fallback',
   });
+
+  console.log(`[AI_CHAT_OBSERVABILITY] requestId=${requestId} intent=${intentData.intent} mode=knowledge-fallback totalDurationMs=${Date.now() - startTime}`);
 
   return {
     ...validatedFallback,
@@ -294,7 +340,7 @@ function buildDeterministicExplanation(params: {
   compareAirQuality?: { cityA: NormalizedAirQuality; cityB: NormalizedAirQuality };
   retrievedDocs: KnowledgeDocument[];
 }) {
-  const { question, effectiveAQ } = params;
+  const { question, effectiveAQ, retrievedDocs } = params;
   const city = effectiveAQ.location.name;
   const country = effectiveAQ.location.country;
   const aqi = effectiveAQ.aqi;
@@ -304,6 +350,8 @@ function buildDeterministicExplanation(params: {
   const pm10 = effectiveAQ.pollutants.pm10?.value ?? 'N/A';
   const no2 = effectiveAQ.pollutants.no2?.value ?? 'N/A';
   const o3 = effectiveAQ.pollutants.o3?.value ?? 'N/A';
+  const so2 = effectiveAQ.pollutants.so2?.value ?? 'N/A';
+  const co = effectiveAQ.pollutants.co?.value ?? 'N/A';
 
   const qLower = question.toLowerCase();
 
@@ -340,9 +388,54 @@ function buildDeterministicExplanation(params: {
 - **AQI (Air Quality Index):** A dimensionless, standardized index (0 to 500) calculated by mapping physical pollutant concentrations through EPA piecewise linear breakpoints to communicate immediate health risk to the public.`,
       };
     }
+
+    if (qLower.includes('no2') && qLower.includes('o3')) {
+      return {
+        summary: 'Difference Between NO2 and O3 (Ozone)',
+        answer: `**Difference Between Nitrogen Dioxide (NO2) and Ground-Level Ozone (O3):**
+
+- **Nitrogen Dioxide (NO2):** A primary reddish-brown gaseous pollutant emitted directly from high-temperature combustion in vehicles and power plants. It irritates airways and acts as an essential chemical precursor to ozone.
+- **Ground-Level Ozone (O3):** A secondary pollutant formed photochemically when NOx and Volatile Organic Compounds (VOCs) react under sunlight. It peaks during warm afternoons and damages lung tissue.`,
+      };
+    }
   }
 
-  // 2. Pollutant / PM2.5 Explanations
+  // 2. Pollutant Specific Explanations
+  if (qLower.includes('what is no2') || qLower.includes('explain no2')) {
+    return {
+      summary: 'Nitrogen Dioxide (NO2) Explanation',
+      answer: `**Nitrogen Dioxide (NO2) Overview:**
+
+- **Description:** NO2 is a pungent, reactive gas primarily released through vehicular exhaust and fossil fuel combustion.
+- **Current Reading in ${city}:** **${no2} µg/m³**.
+- **WHO 24-Hour Benchmark:** **25 µg/m³**.
+- **Environmental Role:** Precursor to ground-level ozone formation and secondary particulate matter in urban corridors.`,
+    };
+  }
+
+  if (qLower.includes('what is ozone') || qLower.includes('what is o3')) {
+    return {
+      summary: 'Ground-Level Ozone (O3) Explanation',
+      answer: `**Ground-Level Ozone (O3) Overview:**
+
+- **Description:** Unlike the protective stratospheric ozone layer, ground-level ozone is a harmful secondary pollutant created by sunlight-driven photochemical reactions between NOx and VOC emissions.
+- **Current Reading in ${city}:** **${o3} µg/m³**.
+- **WHO 8-Hour Daily Benchmark:** **100 µg/m³**.`,
+    };
+  }
+
+  if (qLower.includes('what is pm10') || (qLower.includes('pm10') && qLower.includes('high'))) {
+    return {
+      summary: `PM10 Analysis for ${city}`,
+      answer: `In **${city}, ${country}**, the reported PM10 level is **${pm10} µg/m³**.
+
+**What is PM10?**
+PM10 refers to inhalable particles $\\le 10$ micrometers in diameter, including mechanical dust, road grime, construction debris, and pollen.
+- **WHO 24-Hour Safety Benchmark:** **45 µg/m³**.
+- Current measurement in ${city} is **${Number(pm10) > 45 ? 'above' : 'within'}** the WHO reference threshold.`,
+    };
+  }
+
   if (qLower.includes('pm2.5') || qLower.includes('pm25')) {
     return {
       summary: `PM2.5 Analysis for ${city}`,
@@ -373,12 +466,12 @@ PM2.5 is the primary global indicator (SDG Indicator 11.6.2) for tracking city a
   }
 
   // 4. SDG 11 & Urban Solutions
-  if (qLower.includes('sdg') || qLower.includes('solution') || qLower.includes('reduce') || qLower.includes('policy')) {
+  if (qLower.includes('sdg') || qLower.includes('solution') || qLower.includes('reduce') || qLower.includes('policy') || qLower.includes('urban planner')) {
     return {
       summary: 'Sustainable Cities & Clean Air Solutions (SDG 11)',
       answer: `**Air Quality & UN SDG 11 (Sustainable Cities and Communities):**
 
-- **Target 11.6:** Calls on cities to reduce their per capita environmental footprint, with a dedicated focus on ambient air quality and waste management.
+- **Target 11.6:** Calls on cities to reduce their per capita environmental footprint, with a dedicated focus on ambient air quality and municipal waste management.
 - **Key Urban Interventions:**
   1. **Low-Emission Transit:** Electrifying bus fleets and expanding dedicated pedestrian and cycle corridors.
   2. **Green Buffer Zones:** Planting urban tree canopies along arterial roads to capture airborne particulates.
@@ -394,26 +487,28 @@ PM2.5 is the primary global indicator (SDG Indicator 11.6.2) for tracking city a
 
 **Key Contributing Factors:**
 - **Dominant Pollutant:** **${primary}** (PM2.5 level: **${pm25} µg/m³**).
-- **Other Metrics:** PM10 is ${pm10} µg/m³ and NO₂ is ${no2} µg/m³.
+- **Other Metrics:** PM10 is ${pm10} µg/m³, NO₂ is ${no2} µg/m³, and Ozone is ${o3} µg/m³.
 
 **Why AQI Varies in Urban Centers:**
 Particulate and gaseous accumulation occurs due to vehicular emissions, industrial fuel combustion, and meteorological conditions such as wind stagnation or temperature inversions.`,
     };
   }
 
-  // Default concise current AQ summary
+  // 6. Generic Grounded Synthesis (Covers any new/unlisted environmental question)
+  const topSnippet = retrievedDocs.length > 0 ? retrievedDocs[0].snippet : 'WHO guidelines highlight reducing ambient particulate concentrations to safeguard urban health.';
+
   return {
-    summary: `Current Air Quality Intelligence for ${city}`,
+    summary: `Environmental Intelligence for ${city}`,
     answer: `In **${city}, ${country}**, the current Air Quality Index (AQI) is **${aqi}** (**${cat}**) based on the US EPA standard.
 
-**Reported Measurements:**
+**Reported Environmental Metrics:**
 - **Dominant Pollutant:** ${primary}
-- **PM2.5:** ${pm25} µg/m³
-- **PM10:** ${pm10} µg/m³
-- **NO₂:** ${no2} µg/m³
-- **O₃:** ${o3} µg/m³
+- **PM2.5:** ${pm25} µg/m³ | **PM10:** ${pm10} µg/m³
+- **NO₂:** ${no2} µg/m³ | **O₃:** ${o3} µg/m³
 
-**Context & SDG 11:**
-UrbanAir AI supports environmental awareness by making local air-quality information easier to understand, aligning with SDG 11 and Target 11.6.`,
+**Reference Knowledge & SDG 11 Context:**
+${topSnippet}
+
+*UrbanAir AI interprets measured open environmental telemetry to support community awareness and urban clean-air planning under SDG Target 11.6.*`,
   };
 }
