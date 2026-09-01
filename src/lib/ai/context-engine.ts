@@ -25,19 +25,31 @@ function generateContentWithTimeout(model: any, prompt: string, timeoutMs: numbe
   ]);
 }
 
-// Helper: Classify transient errors for 1-time retry
+// Helper: Classify transient errors for 1-time retry (5xx/network only, NEVER 429 quota)
 function isTransientGeminiError(err: any): boolean {
   const errMsg = String(err?.message || err || '').toLowerCase();
   const errStatus = err?.status || err?.statusCode || 0;
 
+  // 1. Quota / Rate-limit (429) -> Immediate fallback, DO NOT retry
+  if (errStatus === 429 || errMsg.includes('429') || errMsg.includes('quota') || errMsg.includes('too many requests') || errMsg.includes('resource_exhausted')) {
+    return false;
+  }
+
+  // 2. Permanent Client Errors (400, 401, 403, 404) -> Immediate fallback, DO NOT retry
+  if (errStatus >= 400 && errStatus < 500) {
+    return false;
+  }
+
+  // 3. Transient Network / Server Errors -> Eligible for at most ONE retry
   if (errMsg.includes('timeout') || errMsg.includes('econnreset') || errMsg.includes('etimedout') || errMsg.includes('fetch failed')) {
     return true;
   }
-  if (errStatus === 429 || (errStatus >= 500 && errStatus <= 504)) {
+  if (errStatus >= 500 && errStatus <= 504) {
     return true;
   }
   return false;
 }
+
 
 function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
