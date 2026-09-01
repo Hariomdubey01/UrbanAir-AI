@@ -7,6 +7,10 @@ export type AgentIntent =
   | 'POLLUTANT_ANALYSIS'
   | 'TREND_ANALYSIS'
   | 'CITY_COMPARISON'
+  | 'DIFFERENCE_EXPLANATION'
+  | 'HEALTH_IMPACT_EXPLANATION'
+  | 'WHO_EPA_GUIDELINES'
+  | 'CAUSES_SOLUTIONS'
   | 'ENVIRONMENTAL_EDUCATION'
   | 'SDG_11'
   | 'GENERAL_ENVIRONMENTAL'
@@ -50,8 +54,8 @@ const COMMON_CITIES_MAP: Record<string, string> = {
 export function detectUserIntent(userQuery: string, conversationLocationName?: string): ExtractedIntent {
   const qLower = userQuery.toLowerCase().trim();
 
-  // 1. Check Guardrails first
-  const medicalWords = ['diagnose', 'asthma medicine', 'inhaler', 'prescription', 'symptoms of', 'treatment for', 'should i take', 'pills', 'cure my'];
+  // 1. Guardrail short-circuits
+  const medicalWords = ['diagnose my', 'diagnose me', 'prescribe', 'what medicine', 'take pills', 'dosage for', 'what dose', 'cure my', 'chest pain remedy'];
   if (medicalWords.some(w => qLower.includes(w))) {
     return {
       intent: 'MEDICAL_REQUEST',
@@ -61,7 +65,7 @@ export function detectUserIntent(userQuery: string, conversationLocationName?: s
     };
   }
 
-  const offTopicWords = ['python code', 'build a game', 'write essay', 'recipe for', 'movie review', 'cricket match', 'solve equation'];
+  const offTopicWords = ['python code', 'python snake game', 'build a game', 'write essay', 'recipe for', 'movie review', 'cricket match', 'solve equation', 'tell me a joke'];
   if (offTopicWords.some(w => qLower.includes(w))) {
     return {
       intent: 'OFF_TOPIC',
@@ -74,7 +78,7 @@ export function detectUserIntent(userQuery: string, conversationLocationName?: s
   // 2. Location Extraction from User Query
   const foundLocations: string[] = [];
 
-  // Check explicit pattern "of London", "in London", "for London", "London and Delhi"
+  // Check predefined dictionary
   for (const [key, normalizedName] of Object.entries(COMMON_CITIES_MAP)) {
     const regex = new RegExp(`\\b${key}\\b`, 'i');
     if (regex.test(qLower)) {
@@ -84,12 +88,12 @@ export function detectUserIntent(userQuery: string, conversationLocationName?: s
     }
   }
 
-  // Generic extraction for "in [City]", "of [City]", "for [City]" if not in predefined dictionary
-  const prepMatches = qLower.match(/(?:in|of|for|at|around)\s+([a-z\s]+?)(?=\s+\b(?:today|now|aqi|pm25|pm10|and|or|\?|$)\b)/gi);
+  // Preposition matches: "in [City]", "of [City]", "for [City]"
+  const prepMatches = qLower.match(/(?:in|of|for|at|around|between|with)\s+([a-z\s]+?)(?=\s+\b(?:today|now|aqi|pm25|pm10|and|or|\?|$)\b)/gi);
   if (prepMatches) {
     for (const match of prepMatches) {
-      const cityCandidate = match.replace(/^(in|of|for|at|around)\s+/i, '').trim();
-      if (cityCandidate.length >= 3 && !['the', 'my', 'this', 'current', 'air', 'aqi', 'today'].includes(cityCandidate)) {
+      const cityCandidate = match.replace(/^(in|of|for|at|around|between|with)\s+/i, '').trim();
+      if (cityCandidate.length >= 3 && !['the', 'my', 'this', 'current', 'air', 'aqi', 'today', 'who', 'epa'].includes(cityCandidate)) {
         const titleCased = cityCandidate.charAt(0).toUpperCase() + cityCandidate.slice(1);
         if (!foundLocations.includes(titleCased)) {
           foundLocations.push(titleCased);
@@ -99,21 +103,38 @@ export function detectUserIntent(userQuery: string, conversationLocationName?: s
   }
 
   // 3. Classify Intent Type
-  const isComparison = qLower.includes('compare') || (foundLocations.length >= 2) || qLower.includes('versus') || qLower.includes(' vs ');
+  const isComparison = qLower.includes('compare') || 
+                       (foundLocations.length >= 2) || 
+                       qLower.includes('versus') || 
+                       qLower.includes(' vs ') ||
+                       (qLower.includes('which') && (qLower.includes('better') || qLower.includes('worse') || qLower.includes('higher') || qLower.includes('lower') || qLower.includes('cleaner')));
+
+  const isDifference = qLower.includes('difference between') || 
+                       qLower.includes('how does') && qLower.includes('differ') ||
+                       qLower.includes('differ from') ||
+                       qLower.includes('distinction between');
 
   let intent: AgentIntent = 'CURRENT_AIR_QUALITY';
 
   if (isComparison) {
     intent = 'CITY_COMPARISON';
-  } else if (qLower.includes('what is aqi') || qLower.includes('explain aqi') || qLower.includes('how is aqi calculated')) {
+  } else if (isDifference) {
+    intent = 'DIFFERENCE_EXPLANATION';
+  } else if (qLower.includes('who recommend') || qLower.includes('who guideline') || qLower.includes('epa standard') || qLower.includes('epa aqi scale') || qLower.includes('threshold')) {
+    intent = 'WHO_EPA_GUIDELINES';
+  } else if (qLower.includes('health impact') || qLower.includes('respiratory') || qLower.includes('lungs') || qLower.includes('long-term exposure') || qLower.includes('public health') || qLower.includes('dangerous') || qLower.includes('harmful')) {
+    intent = 'HEALTH_IMPACT_EXPLANATION';
+  } else if (qLower.includes('reduce') || qLower.includes('solution') || qLower.includes('policy') || qLower.includes('urban planner') || qLower.includes('causes of') || qLower.includes('why is air pollution high') || qLower.includes('traffic pollution')) {
+    intent = 'CAUSES_SOLUTIONS';
+  } else if (qLower.includes('what is aqi') || qLower.includes('explain aqi') || qLower.includes('how is aqi calculated') || qLower.includes('aqi 150') || qLower.includes('what does aqi')) {
     intent = 'AQI_EXPLANATION';
-  } else if (qLower.includes('pm2.5') || qLower.includes('pm10') || qLower.includes('no2') || qLower.includes('o3') || qLower.includes('so2') || qLower.includes('co')) {
+  } else if (qLower.includes('what is pm2.5') || qLower.includes('what is pm10') || qLower.includes('what is no2') || qLower.includes('what is ozone') || qLower.includes('what is co') || qLower.includes('what is so2') || qLower.includes('dominant pollutant')) {
     intent = 'POLLUTANT_EXPLANATION';
   } else if (qLower.includes('sdg') || qLower.includes('sustainable') || qLower.includes('community')) {
     intent = 'SDG_11';
-  } else if (qLower.includes('trend') || qLower.includes('improving') || qLower.includes('worse') || qLower.includes('over time')) {
+  } else if (qLower.includes('trend') || qLower.includes('improving') || qLower.includes('over time')) {
     intent = 'TREND_ANALYSIS';
-  } else if (foundLocations.length > 0 || qLower.includes('aqi') || qLower.includes('current') || qLower.includes('air quality')) {
+  } else if (foundLocations.length > 0 || qLower.includes('aqi') || qLower.includes('current') || qLower.includes('today') || qLower.includes('air quality')) {
     intent = 'CURRENT_AIR_QUALITY';
   } else {
     intent = 'GENERAL_ENVIRONMENTAL';

@@ -18,8 +18,16 @@ export default function AIResponseCard({ data, onOpenExplainability }: AIRespons
   const isGemini = data.mode === 'gemini-rag' && !isFallback;
 
   // Markdown formatting helper
-  const renderFormattedContent = (content: string) => {
+  const renderFormattedContent = (content?: string) => {
+    if (!content || typeof content !== 'string') {
+      return (
+        <p className="text-xs sm:text-sm text-forest-800/90 dark:text-slate-200 leading-relaxed">
+          No additional response text available.
+        </p>
+      );
+    }
     const lines = content.split('\n');
+
     return lines.map((line, idx) => {
       const trimmed = line.trim();
       if (!trimmed) return <div key={idx} className="h-2" />;

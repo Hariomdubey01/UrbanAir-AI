@@ -67,7 +67,29 @@ I am currently connected to live air telemetry for **${selectedCity.name}, ${sel
         }),
       });
 
-      const data: AIResponseData = await res.json();
+      const data: any = await res.json();
+
+      if (!res.ok || !data || !data.success || typeof data.answer !== 'string') {
+        const errorText = data?.error || 'Unable to reach the environmental intelligence engine right now. Please try again.';
+        const errorMsg: ChatMessage = {
+          id: `err-${Date.now()}`,
+          role: 'assistant',
+          content: errorText,
+          timestamp: formatTimeString(new Date()),
+        };
+        setMessages(prev => [...prev, errorMsg]);
+        return;
+      }
+
+      // If location context changed, maintain follow-up city memory
+      if (data.explainability?.locationUsed) {
+        const matchedCity = POPULAR_CITIES.find(c =>
+          data.explainability.locationUsed.toLowerCase().includes(c.name.toLowerCase())
+        );
+        if (matchedCity) {
+          setConversationCityName(matchedCity.name);
+        }
+      }
 
       const aiMsg: ChatMessage = {
         id: `ai-${Date.now()}`,
@@ -76,7 +98,6 @@ I am currently connected to live air telemetry for **${selectedCity.name}, ${sel
         timestamp: formatTimeString(new Date()),
         aiResponse: data,
       };
-
 
       setMessages(prev => [...prev, aiMsg]);
     } catch (err) {
@@ -91,6 +112,7 @@ I am currently connected to live air telemetry for **${selectedCity.name}, ${sel
       setLoading(false);
     }
   }, [inputQuery, loading, airQuality, selectedCity.name, conversationCityName]);
+
 
   useEffect(() => {
     async function loadCityAQ() {
