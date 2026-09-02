@@ -25,6 +25,14 @@ export const metadata: Metadata = {
     title: "UrbanAir AI — Understand Your City's Air",
     description: "Live air quality telemetry and grounded AI explanations for sustainable cities (SDG 11).",
   },
+  icons: {
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: 'any' },
+    ],
+    shortcut: '/favicon.ico',
+    apple: '/icon.svg',
+  },
 };
 
 export default function RootLayout({
