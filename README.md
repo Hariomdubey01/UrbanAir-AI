@@ -12,7 +12,7 @@ UrbanAir AI combines environmental data with responsible AI to make air quality,
 
 <div align="center">
 
-[![🌐 Live Website](https://img.shields.io/badge/🌐_Live_Website-Visit-2ea44f?style=for-the-badge)](urban-air-ai.vercel.app)
+[![🌐 Live Website](https://img.shields.io/badge/🌐_Live_Website-Visit-2ea44f?style=for-the-badge)](https://urban-air-ai.vercel.app/)
 [![💻 GitHub Repository](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/Hariomdubey01/UrbanAir-AI.git)
 
 </div>
