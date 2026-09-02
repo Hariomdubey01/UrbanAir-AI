@@ -12,8 +12,8 @@ UrbanAir AI combines environmental data with responsible AI to make air quality,
 
 <div align="center">
 
-[![🌐 Live Website](https://img.shields.io/badge/🌐_Live_Website-Visit-2ea44f?style=for-the-badge)](YOUR_LIVE_URL_HERE)
-[![💻 GitHub Repository](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](YOUR_GITHUB_REPO_URL_HERE)
+[![🌐 Live Website](https://img.shields.io/badge/🌐_Live_Website-Visit-2ea44f?style=for-the-badge)](urban-air-ai.vercel.app)
+[![💻 GitHub Repository](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/Hariomdubey01/UrbanAir-AI.git)
 
 </div>
 
@@ -25,7 +25,7 @@ UrbanAir AI combines environmental data with responsible AI to make air quality,
 
 The landing page introduces UrbanAir AI, its environmental intelligence capabilities, and its focus on cleaner and more sustainable cities.
 
-![UrbanAir AI Home](./docs/screenshots/home.png)
+![UrbanAir AI Home](https://github.com/Hariomdubey01/UrbanAir-AI/blob/main/Screenshots/Home.png)
 
 ---
 
@@ -33,7 +33,7 @@ The landing page introduces UrbanAir AI, its environmental intelligence capabili
 
 The dashboard presents current AQI, pollutant levels, air-quality status, and key environmental metrics for the selected location.
 
-![Air Quality Dashboard](./docs/screenshots/dashboard.png)
+![Air Quality Dashboard](https://github.com/Hariomdubey01/UrbanAir-AI/blob/main/Screenshots/Air%20Quality%20Dashboard.png)
 
 ---
 
@@ -41,7 +41,7 @@ The dashboard presents current AQI, pollutant levels, air-quality status, and ke
 
 The comparison interface helps users evaluate air-quality conditions and pollutant levels across different cities.
 
-![City Comparison](./docs/screenshots/compare.png)
+![City Comparison](https://github.com/Hariomdubey01/UrbanAir-AI/blob/main/Screenshots/City%20Comparison.png)
 
 ---
 
@@ -49,7 +49,7 @@ The comparison interface helps users evaluate air-quality conditions and polluta
 
 The AI Advisor uses Gemini, RAG-based environmental knowledge, and grounded fallback responses to answer natural-language questions about air quality, pollution, and sustainability.
 
-![AI Environmental Advisor](./docs/screenshots/ai-advisor.png)
+![AI Environmental Advisor](https://github.com/Hariomdubey01/UrbanAir-AI/blob/main/Screenshots/AI%20Environmental%20Advisor.png)
 
 ---
 
@@ -57,7 +57,7 @@ The AI Advisor uses Gemini, RAG-based environmental knowledge, and grounded fall
 
 This section explains how urban air quality connects with UN SDG 11, Target 11.6, and Indicator 11.6.2 for sustainable urban development.
 
-![SDG 11](./docs/screenshots/sdg11.png)
+![SDG 11](https://github.com/Hariomdubey01/UrbanAir-AI/blob/main/Screenshots/SDG%2011.png)
 
 ---
 
@@ -1001,16 +1001,25 @@ By combining measured environmental telemetry, deterministic AQI analysis, verif
 # 👨‍💻 Author
 
 **Hariom Dubey**
-Environmental Intelligence & Sustainable Cities Project
+Aspiring **Data Analyst** passionate about transforming data into meaningful business insights.
 
-**Focus:**
+### Areas of Interest
 
-- Environmental Analytics
-- AI & RAG
-- Air-Quality Intelligence
-- Sustainable Cities
-- UN SDG 11
+- Data Analytics
+- Business Intelligence
+- Data Visualization
+- SQL
+- Python
+- Power BI
+- Machine Learning
+---
+## 📬 Contact
 
+| Platform | Link |
+|----------|------|
+| 📧 Email | <mailto:hariomkumard8@gmail.com> |
+| 💼 LinkedIn | [linkedin.com/in/hariom-dubey-81b752285](https://linkedin.com/in/hariom-dubey-81b752285) |
+| 💻 GitHub | [github.com/Hariomdubey01](https://github.com/Hariomdubey01) |
 ---
 
 # 📄 License
