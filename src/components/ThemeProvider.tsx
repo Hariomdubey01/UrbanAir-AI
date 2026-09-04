@@ -15,21 +15,39 @@ const ThemeContext = createContext<ThemeContextType>({
 });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('light');
+  const [theme, setTheme] = useState<Theme>('dark');
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem('urbanair-theme') as Theme;
-    if (saved === 'dark' || saved === 'light') {
-      setTheme(saved);
-      if (saved === 'dark') document.documentElement.classList.add('dark');
-      else document.documentElement.classList.remove('dark');
+    setMounted(true);
+    let initialTheme: Theme = 'dark';
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const themeParam = params.get('theme') as Theme | null;
+      if (themeParam === 'light' || themeParam === 'dark') {
+        initialTheme = themeParam;
+      } else {
+        const saved = localStorage.getItem('urbanair-theme') as Theme | null;
+        if (saved === 'light') initialTheme = 'light';
+      }
+    } catch (e) {}
+
+    if (initialTheme === 'light') {
+      setTheme('light');
+      document.documentElement.classList.remove('dark');
+    } else {
+      setTheme('dark');
+      document.documentElement.classList.add('dark');
     }
   }, []);
 
   const toggleTheme = () => {
-    const next = theme === 'light' ? 'dark' : 'light';
+    const next = theme === 'dark' ? 'light' : 'dark';
     setTheme(next);
-    localStorage.setItem('urbanair-theme', next);
+    try {
+      localStorage.setItem('urbanair-theme', next);
+    } catch (e) {}
+
     if (next === 'dark') {
       document.documentElement.classList.add('dark');
     } else {

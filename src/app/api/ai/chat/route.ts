@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { airQuality, compareAirQuality, locationName, conversationLocationName, topic } = body;
-    const rawQuestion = body.question || body.query || body.prompt;
+    const rawQuestion = body.question || body.query || body.prompt || body.message;
 
     if (!rawQuestion || typeof rawQuestion !== 'string' || rawQuestion.trim().length === 0) {
       return NextResponse.json(

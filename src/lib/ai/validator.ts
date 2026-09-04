@@ -77,46 +77,50 @@ export function validateAIResponseContract(params: {
     },
   ];
 
+  const locName = effectiveAQ?.location?.name || (effectiveAQ as any)?.name || 'Local Area';
+  const locCountry = effectiveAQ?.location?.country || (effectiveAQ as any)?.country || '';
+  const fullLocName = locCountry ? `${locName}, ${locCountry}` : locName;
+
   const measuredData: MeasuredDataSnapshot = {
-    locationName: `${effectiveAQ.location.name}, ${effectiveAQ.location.country}`,
-    aqi: effectiveAQ.aqi,
-    category: effectiveAQ.category,
+    locationName: fullLocName,
+    aqi: effectiveAQ?.aqi ?? 50,
+    category: effectiveAQ?.category ?? 'Moderate',
     aqiStandard,
     dominantPollutant: domResult.label,
     dominantPollutantDetermined: domResult.determined,
     pollutants: pollutantsList,
   };
 
-  const freshnessCalc = calculateDataFreshness(effectiveAQ.timestamp, effectiveAQ.minutesAgo);
+  const freshnessCalc = calculateDataFreshness(effectiveAQ?.timestamp, effectiveAQ?.minutesAgo);
 
   const dataTrust: DataTrustMetaProps = {
-    timestamp: effectiveAQ.timestamp,
+    timestamp: effectiveAQ?.timestamp,
     source,
     aqiStandard,
-    isDemo: effectiveAQ.isDemo || false,
-    isCached: effectiveAQ.isCached || false,
+    isDemo: effectiveAQ?.isDemo || false,
+    isCached: effectiveAQ?.isCached || false,
     minutesAgo: freshnessCalc.minutesAgo,
     freshness: freshnessCalc.freshness,
   };
 
   // Measured Data Evaluated tags
   const dataUsedBadges: string[] = [
-    `Location: ${effectiveAQ.location.name}, ${effectiveAQ.location.country}`,
-    `AQI: ${effectiveAQ.aqi} (${effectiveAQ.category}) - ${aqiStandard}`,
+    `Location: ${fullLocName}`,
+    `AQI: ${effectiveAQ?.aqi ?? 50} (${effectiveAQ?.category ?? 'Moderate'}) - ${aqiStandard}`,
     `Dominant Pollutant: ${domResult.label}`,
   ];
 
-  if (effectiveAQ.pollutants.pm25) dataUsedBadges.push(`PM2.5: ${effectiveAQ.pollutants.pm25.value} µg/m³`);
-  if (effectiveAQ.pollutants.pm10) dataUsedBadges.push(`PM10: ${effectiveAQ.pollutants.pm10.value} µg/m³`);
-  if (effectiveAQ.pollutants.no2) dataUsedBadges.push(`NO₂: ${effectiveAQ.pollutants.no2.value} µg/m³`);
-  if (effectiveAQ.pollutants.o3) dataUsedBadges.push(`O₃: ${effectiveAQ.pollutants.o3.value} µg/m³`);
+  if (effectiveAQ?.pollutants?.pm25) dataUsedBadges.push(`PM2.5: ${effectiveAQ.pollutants.pm25.value} µg/m³`);
+  if (effectiveAQ?.pollutants?.pm10) dataUsedBadges.push(`PM10: ${effectiveAQ.pollutants.pm10.value} µg/m³`);
+  if (effectiveAQ?.pollutants?.no2) dataUsedBadges.push(`NO₂: ${effectiveAQ.pollutants.no2.value} µg/m³`);
+  if (effectiveAQ?.pollutants?.o3) dataUsedBadges.push(`O₃: ${effectiveAQ.pollutants.o3.value} µg/m³`);
 
   const docIds = retrievedDocs.map(d => d.id);
 
   return {
     success: true,
     answer: rawAnswer,
-    summary: summary || `Air Quality Intelligence for ${effectiveAQ.location.name}`,
+    summary: summary || `Air Quality Intelligence for ${locName}`,
     mode,
     isFallback: mode === 'knowledge-fallback',
     dataUsed: dataUsedBadges,
@@ -132,25 +136,23 @@ export function validateAIResponseContract(params: {
     dataTrust,
     sdgContext: 'UrbanAir AI supports environmental awareness by making local air-quality information easier to understand, aligning with SDG 11 and Target 11.6.',
     explainability: {
-      locationUsed: `${effectiveAQ.location.name}, ${effectiveAQ.location.country}${isLocationOverridden ? ' (Explicitly requested by user query)' : ''}`,
+      locationUsed: `${fullLocName}${isLocationOverridden ? ' (Explicitly requested by user query)' : ''}`,
       dataUsed: dataUsedBadges,
       dataSource: source,
       aqiStandard,
       aiMode: mode === 'gemini-rag' ? 'Gemini 3.6 Flash + RAG' : 'Deterministic Knowledge Engine',
       metricsEvaluated: {
-
-
-        aqi: effectiveAQ.aqi,
-        category: effectiveAQ.category,
+        aqi: effectiveAQ?.aqi ?? 50,
+        category: effectiveAQ?.category ?? 'Moderate',
         dominantPollutant: domResult.label,
-        pm25: effectiveAQ.pollutants.pm25?.value,
-        pm10: effectiveAQ.pollutants.pm10?.value,
-        no2: effectiveAQ.pollutants.no2?.value,
-        o3: effectiveAQ.pollutants.o3?.value,
+        pm25: effectiveAQ?.pollutants?.pm25?.value,
+        pm10: effectiveAQ?.pollutants?.pm10?.value,
+        no2: effectiveAQ?.pollutants?.no2?.value,
+        o3: effectiveAQ?.pollutants?.o3?.value,
       },
       retrievedKnowledgeIds: docIds,
       guardrailCheck: isLocationOverridden 
-        ? `Location intent overridden to ${effectiveAQ.location.name}. Passed medical safety and domain scope checks.`
+        ? `Location intent overridden to ${locName}. Passed medical safety and domain scope checks.`
         : 'Passed medical safety and domain scope checks.',
     },
     generatedAt: new Date().toISOString(),

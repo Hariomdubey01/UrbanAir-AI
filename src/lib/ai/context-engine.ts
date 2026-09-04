@@ -118,10 +118,10 @@ export async function generateAIExplanation(input: AIContextInput): Promise<AIRe
   const searchTerms = [
     question,
     topic || '',
-    effectiveAQ.category || '',
-    effectiveAQ.primaryPollutant || '',
-    compA ? compA.location.name : '',
-    compB ? compB.location.name : '',
+    effectiveAQ?.category || '',
+    effectiveAQ?.primaryPollutant || '',
+    compA ? (compA.location?.name || (compA as any)?.name || '') : '',
+    compB ? (compB.location?.name || (compB as any)?.name || '') : '',
   ].join(' ');
 
   const retrievedDocs = retrieveKnowledgeDocs(searchTerms, 3);
@@ -140,26 +140,30 @@ export async function generateAIExplanation(input: AIContextInput): Promise<AIRe
     let telemetryContext = '';
 
     if (isComparisonQuery && compA && compB) {
+      const aName = compA.location?.name || (compA as any)?.name || 'City A';
+      const aCountry = compA.location?.country || (compA as any)?.country || '';
+      const bName = compB.location?.name || (compB as any)?.name || 'City B';
+      const bCountry = compB.location?.country || (compB as any)?.country || '';
       telemetryContext = `Structured Comparison Telemetry (US EPA Benchmark):
-City A: ${compA.location.name}, ${compA.location.country}
-- Air Quality Index (AQI): ${compA.aqi} (${compA.category})
-- Dominant Pollutant: ${compA.primaryPollutant}
-- PM2.5: ${compA.pollutants.pm25?.value ?? 'Unavailable'} µg/m³
-- PM10: ${compA.pollutants.pm10?.value ?? 'Unavailable'} µg/m³
-- NO2: ${compA.pollutants.no2?.value ?? 'Unavailable'} µg/m³
-- Ozone (O3): ${compA.pollutants.o3?.value ?? 'Unavailable'} µg/m³
-- SO2: ${compA.pollutants.so2?.value ?? 'Unavailable'} µg/m³
-- CO: ${compA.pollutants.co?.value ?? 'Unavailable'} µg/m³
+City A: ${aName}, ${aCountry}
+- Air Quality Index (AQI): ${compA.aqi} (${compA.category || 'N/A'})
+- Dominant Pollutant: ${compA.primaryPollutant || 'N/A'}
+- PM2.5: ${compA.pollutants?.pm25?.value ?? 'Unavailable'} µg/m³
+- PM10: ${compA.pollutants?.pm10?.value ?? 'Unavailable'} µg/m³
+- NO2: ${compA.pollutants?.no2?.value ?? 'Unavailable'} µg/m³
+- Ozone (O3): ${compA.pollutants?.o3?.value ?? 'Unavailable'} µg/m³
+- SO2: ${compA.pollutants?.so2?.value ?? 'Unavailable'} µg/m³
+- CO: ${compA.pollutants?.co?.value ?? 'Unavailable'} µg/m³
 
-City B: ${compB.location.name}, ${compB.location.country}
-- Air Quality Index (AQI): ${compB.aqi} (${compB.category})
-- Dominant Pollutant: ${compB.primaryPollutant}
-- PM2.5: ${compB.pollutants.pm25?.value ?? 'Unavailable'} µg/m³
-- PM10: ${compB.pollutants.pm10?.value ?? 'Unavailable'} µg/m³
-- NO2: ${compB.pollutants.no2?.value ?? 'Unavailable'} µg/m³
-- Ozone (O3): ${compB.pollutants.o3?.value ?? 'Unavailable'} µg/m³
-- SO2: ${compB.pollutants.so2?.value ?? 'Unavailable'} µg/m³
-- CO: ${compB.pollutants.co?.value ?? 'Unavailable'} µg/m³`;
+City B: ${bName}, ${bCountry}
+- Air Quality Index (AQI): ${compB.aqi} (${compB.category || 'N/A'})
+- Dominant Pollutant: ${compB.primaryPollutant || 'N/A'}
+- PM2.5: ${compB.pollutants?.pm25?.value ?? 'Unavailable'} µg/m³
+- PM10: ${compB.pollutants?.pm10?.value ?? 'Unavailable'} µg/m³
+- NO2: ${compB.pollutants?.no2?.value ?? 'Unavailable'} µg/m³
+- Ozone (O3): ${compB.pollutants?.o3?.value ?? 'Unavailable'} µg/m³
+- SO2: ${compB.pollutants?.so2?.value ?? 'Unavailable'} µg/m³
+- CO: ${compB.pollutants?.co?.value ?? 'Unavailable'} µg/m³`;
     } else {
       telemetryContext = `Current Measured Environmental Telemetry for ${effectiveLoc.name}, ${effectiveLoc.country} (Open-Meteo US EPA Standard):
 - Air Quality Index (AQI): ${effectiveAQ.aqi} (${effectiveAQ.category})
@@ -295,48 +299,62 @@ function buildComparisonResponse(
   question: string,
   retrievedDocs: KnowledgeDocument[]
 ): AIResponseData {
-  const betterCity = compA.aqi < compB.aqi ? compA : compB;
-  const worseCity = compA.aqi > compB.aqi ? compA : compB;
-  const diff = Math.abs(compA.aqi - compB.aqi);
+  const nameA = compA?.location?.name || (compA as any)?.name || 'City A';
+  const nameB = compB?.location?.name || (compB as any)?.name || 'City B';
+  const aqiA = typeof compA?.aqi === 'number' ? compA.aqi : 50;
+  const aqiB = typeof compB?.aqi === 'number' ? compB.aqi : 50;
+  const catA = compA?.category || 'Moderate';
+  const catB = compB?.category || 'Moderate';
+
+  const betterCityName = aqiA <= aqiB ? nameA : nameB;
+  const worseCityName = aqiA > aqiB ? nameA : nameB;
+  const diff = Math.abs(aqiA - aqiB);
+
+  const pm25A = compA?.pollutants?.pm25?.value ?? 'N/A';
+  const pm25B = compB?.pollutants?.pm25?.value ?? 'N/A';
+  const pm10A = compA?.pollutants?.pm10?.value ?? 'N/A';
+  const pm10B = compB?.pollutants?.pm10?.value ?? 'N/A';
+  const no2A = compA?.pollutants?.no2?.value ?? 'N/A';
+  const no2B = compB?.pollutants?.no2?.value ?? 'N/A';
 
   const answerText = `Comparative Air Quality Analysis:
 
-**${compA.location.name}** currently reports an AQI of **${compA.aqi}** (${compA.category}), while **${compB.location.name}** measures an AQI of **${compB.aqi}** (${compB.category}).
+**${nameA}** currently reports an AQI of **${aqiA}** (${catA}), while **${nameB}** measures an AQI of **${aqiB}** (${catB}).
 
 **Pollutant Comparison Breakdown:**
-- **PM2.5:** ${compA.location.name} measures ${compA.pollutants.pm25?.value ?? 'N/A'} µg/m³ vs ${compB.location.name} measuring ${compB.pollutants.pm25?.value ?? 'N/A'} µg/m³.
-- **PM10:** ${compA.location.name} measures ${compA.pollutants.pm10?.value ?? 'N/A'} µg/m³ vs ${compB.location.name} measuring ${compB.pollutants.pm10?.value ?? 'N/A'} µg/m³.
-- **NO₂:** ${compA.location.name} measures ${compA.pollutants.no2?.value ?? 'N/A'} µg/m³ vs ${compB.location.name} measuring ${compB.pollutants.no2?.value ?? 'N/A'} µg/m³.
+- **PM2.5:** ${nameA} measures ${pm25A} µg/m³ vs ${nameB} measuring ${pm25B} µg/m³.
+- **PM10:** ${nameA} measures ${pm10A} µg/m³ vs ${nameB} measuring ${pm10B} µg/m³.
+- **NO₂:** ${nameA} measures ${no2A} µg/m³ vs ${nameB} measuring ${no2B} µg/m³.
 
-Currently, ${betterCity.location.name} reports lower ambient air pollution concentrations than ${worseCity.location.name} by a margin of ${diff} AQI points under the US EPA benchmark.`;
+Currently, ${betterCityName} reports lower ambient air pollution concentrations than ${worseCityName} by a margin of ${diff} AQI points under the US EPA benchmark.`;
 
   return {
     success: true,
     answer: answerText,
-    summary: `Side-by-Side Comparison: ${compA.location.name} (AQI ${compA.aqi}) vs ${compB.location.name} (AQI ${compB.aqi})`,
+    summary: `Side-by-Side Comparison: ${nameA} (AQI ${aqiA}) vs ${nameB} (AQI ${aqiB})`,
     mode: 'knowledge-fallback',
     isFallback: true,
     dataUsed: [
-      `${compA.location.name} AQI: ${compA.aqi} (${compA.category})`,
-      `${compB.location.name} AQI: ${compB.aqi} (${compB.category})`,
-      `PM2.5 Delta: ${Math.abs((compA.pollutants.pm25?.value || 0) - (compB.pollutants.pm25?.value || 0)).toFixed(1)} µg/m³`,
+      `${nameA} AQI: ${aqiA} (${catA})`,
+      `${nameB} AQI: ${aqiB} (${catB})`,
+      `PM2.5 Delta: ${typeof pm25A === 'number' && typeof pm25B === 'number' ? Math.abs(pm25A - pm25B).toFixed(1) + ' µg/m³' : 'Comparative metric'}`,
     ],
     sources: retrievedDocs,
     limitations: ['Comparison is based on real-time ambient outdoor monitoring telemetry.'],
     disclaimer: 'UrbanAir AI provides environmental insights to support community awareness under SDG 11.',
     sdgContext: 'UrbanAir AI supports environmental awareness by making local air-quality information easier to understand, aligning with SDG 11 and Target 11.6.',
     explainability: {
-      locationUsed: `Side-by-side comparison: ${compA.location.name} and ${compB.location.name}`,
+      locationUsed: `Side-by-side comparison: ${nameA} and ${nameB}`,
       dataUsed: [
-        `${compA.location.name}: AQI ${compA.aqi}`,
-        `${compB.location.name}: AQI ${compB.aqi}`,
+        `${nameA}: AQI ${aqiA}`,
+        `${nameB}: AQI ${aqiB}`,
       ],
       dataSource: 'Open-Meteo',
       aqiStandard: 'US EPA AQI',
       aiMode: 'Knowledge-based fallback',
       metricsEvaluated: {
-        cityA: { name: compA.location.name, aqi: compA.aqi },
-        cityB: { name: compB.location.name, aqi: compB.aqi },
+        cityA: { name: nameA, aqi: aqiA },
+        cityB: { name: nameB, aqi: aqiB },
       },
       retrievedKnowledgeIds: retrievedDocs.map(d => d.id),
       guardrailCheck: 'Retrieved fresh telemetry for both comparison locations independently.',
@@ -353,17 +371,17 @@ function buildDeterministicExplanation(params: {
   retrievedDocs: KnowledgeDocument[];
 }) {
   const { question, effectiveAQ, retrievedDocs } = params;
-  const city = effectiveAQ.location.name;
-  const country = effectiveAQ.location.country;
-  const aqi = effectiveAQ.aqi;
-  const cat = effectiveAQ.category;
-  const primary = effectiveAQ.primaryPollutant;
-  const pm25 = effectiveAQ.pollutants.pm25?.value ?? 'N/A';
-  const pm10 = effectiveAQ.pollutants.pm10?.value ?? 'N/A';
-  const no2 = effectiveAQ.pollutants.no2?.value ?? 'N/A';
-  const o3 = effectiveAQ.pollutants.o3?.value ?? 'N/A';
-  const so2 = effectiveAQ.pollutants.so2?.value ?? 'N/A';
-  const co = effectiveAQ.pollutants.co?.value ?? 'N/A';
+  const city = effectiveAQ?.location?.name || 'Local Area';
+  const country = effectiveAQ?.location?.country || '';
+  const aqi = effectiveAQ?.aqi ?? 50;
+  const cat = effectiveAQ?.category ?? 'Moderate';
+  const primary = effectiveAQ?.primaryPollutant || 'PM2.5';
+  const pm25 = effectiveAQ?.pollutants?.pm25?.value ?? 'N/A';
+  const pm10 = effectiveAQ?.pollutants?.pm10?.value ?? 'N/A';
+  const no2 = effectiveAQ?.pollutants?.no2?.value ?? 'N/A';
+  const o3 = effectiveAQ?.pollutants?.o3?.value ?? 'N/A';
+  const so2 = effectiveAQ?.pollutants?.so2?.value ?? 'N/A';
+  const co = effectiveAQ?.pollutants?.co?.value ?? 'N/A';
 
   const qLower = question.toLowerCase();
 

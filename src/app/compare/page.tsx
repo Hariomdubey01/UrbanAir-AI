@@ -100,29 +100,29 @@ function CompareContent() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-entrance">
       
       {/* Header */}
-      <div className="pb-4 border-b border-forest-800/10 dark:border-white/[0.08] space-y-1">
+      <div className="pb-4 border-b border-white/10 space-y-1">
         <div className="flex items-center gap-2">
-          <ArrowLeftRight className="w-4 h-4 text-teal-600 dark:text-teal-400 stroke-[1.5]" />
-          <span className="text-xs font-semibold uppercase tracking-wider text-teal-600 dark:text-teal-400">Environmental Analytics</span>
+          <ArrowLeftRight className="w-4 h-4 text-teal-400 stroke-[1.5]" />
+          <span className="text-xs font-bold uppercase tracking-wider text-teal-400">Environmental Analytics</span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-semibold text-forest-800 dark:text-white tracking-tight">Side-by-Side City Comparison</h1>
-        <p className="text-muted text-xs">Compare real-time air quality metrics and pollutant profiles across 2–3 global cities with honest missing-metric handling.</p>
+        <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">Side-by-Side City Comparison</h1>
+        <p className="text-slate-500 dark:text-slate-400 text-xs">Compare real-time air quality metrics and pollutant profiles across 2–3 global cities with honest missing-metric handling.</p>
       </div>
 
       {/* Selectors */}
-      <div className="p-5 rounded-[20px] bg-white dark:bg-[#0D1B18] border border-forest-800/10 dark:border-white/[0.08] shadow-sm space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-forest-800/5 dark:border-white/[0.05]">
-          <span className="text-xs font-bold text-forest-800 dark:text-white uppercase tracking-wider">Configure Cities for Comparison</span>
+      <div className="p-5 rounded-2xl glass-card space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-200 dark:border-white/10">
+          <span className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider">Configure Cities for Comparison</span>
           {!showCityC ? (
             <button
               onClick={() => {
                 setShowCityC(true);
                 if (!cityCSelect) setCityCSelect('London');
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-teal-500/10 hover:bg-teal-500/20 text-teal-600 dark:text-teal-400 text-xs font-semibold border border-teal-500/20 transition-all"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-teal-500/10 hover:bg-teal-500/20 text-teal-700 dark:text-teal-300 text-xs font-bold border border-teal-500/30 transition-all active:scale-95"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Add 3rd City</span>
@@ -132,7 +132,7 @@ function CompareContent() {
               onClick={() => {
                 setShowCityC(false);
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 text-xs font-semibold border border-red-500/20 transition-all"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 text-xs font-bold border border-red-500/30 transition-all active:scale-95"
             >
               <Trash2 className="w-3.5 h-3.5" />
               <span>Remove 3rd City</span>
@@ -142,14 +142,14 @@ function CompareContent() {
 
         <div className={`grid grid-cols-1 ${showCityC ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-4`}>
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-forest-800 dark:text-slate-300 flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-emerald-500" />
+            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>City A:</span>
             </label>
             <select
               value={cityASelect}
               onChange={(e) => setCityASelect(e.target.value)}
-              className="w-full bg-ivory-100 dark:bg-forest-900 border border-forest-800/15 dark:border-white/[0.08] rounded-xl px-3.5 py-2.5 text-xs font-semibold text-forest-800 dark:text-white focus:outline-none focus:border-emerald-500"
+              className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 transition-colors"
             >
               {POPULAR_CITIES.map((c) => (
                 <option key={c.id} value={c.name}>{c.name}, {c.country}</option>
@@ -158,14 +158,14 @@ function CompareContent() {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-forest-800 dark:text-slate-300 flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-teal-500" />
+            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
               <span>City B:</span>
             </label>
             <select
               value={cityBSelect}
               onChange={(e) => setCityBSelect(e.target.value)}
-              className="w-full bg-ivory-100 dark:bg-forest-900 border border-forest-800/15 dark:border-white/[0.08] rounded-xl px-3.5 py-2.5 text-xs font-semibold text-forest-800 dark:text-white focus:outline-none focus:border-emerald-500"
+              className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 transition-colors"
             >
               {POPULAR_CITIES.map((c) => (
                 <option key={c.id} value={c.name}>{c.name}, {c.country}</option>
@@ -175,14 +175,14 @@ function CompareContent() {
 
           {showCityC && (
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-forest-800 dark:text-slate-300 flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-indigo" />
+              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400" />
                 <span>City C (Optional 3rd):</span>
               </label>
               <select
                 value={cityCSelect}
                 onChange={(e) => setCityCSelect(e.target.value)}
-                className="w-full bg-ivory-100 dark:bg-forest-900 border border-forest-800/15 dark:border-white/[0.08] rounded-xl px-3.5 py-2.5 text-xs font-semibold text-forest-800 dark:text-white focus:outline-none focus:border-emerald-500"
+                className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 transition-colors"
               >
                 {POPULAR_CITIES.map((c) => (
                   <option key={c.id} value={c.name}>{c.name}, {c.country}</option>
@@ -194,9 +194,9 @@ function CompareContent() {
       </div>
 
       {loading || !cityAData || !cityBData ? (
-        <div className="p-12 text-center rounded-[20px] bg-white dark:bg-[#0D1B18] border border-forest-800/10 dark:border-white/[0.08] space-y-2">
-          <RefreshCw className="w-6 h-6 text-emerald-500 animate-spin mx-auto" />
-          <p className="text-xs font-semibold text-muted">Fetching comparison telemetry...</p>
+        <div className="p-12 text-center rounded-2xl glass-card space-y-2">
+          <RefreshCw className="w-6 h-6 text-emerald-600 dark:text-emerald-400 animate-spin mx-auto" />
+          <p className="text-xs font-bold text-slate-500 dark:text-slate-400">Fetching comparison telemetry...</p>
         </div>
       ) : (
         <div className="space-y-8">
@@ -206,19 +206,19 @@ function CompareContent() {
             {citiesList.map((item, idx) => {
               if (!item.data) return null;
               return (
-                <div key={idx} className="p-6 rounded-[20px] bg-white dark:bg-[#0D1B18] border border-forest-800/10 dark:border-white/[0.08] space-y-3 shadow-resting">
+                <div key={idx} className="p-6 rounded-2xl glass-card space-y-3 shadow-card transition-all duration-300">
                   <div className="flex justify-between items-start">
                     <div>
-                      <span className="text-[10px] uppercase font-bold text-muted">{item.label}</span>
-                      <h3 className="text-2xl font-semibold text-forest-800 dark:text-white">{item.data.location.name}</h3>
-                      <p className="text-xs text-muted">{item.data.location.country}</p>
+                      <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">{item.label}</span>
+                      <h3 className="text-2xl font-bold text-slate-900 dark:text-white">{item.data.location.name}</h3>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">{item.data.location.country}</p>
                     </div>
                     <div className="text-right">
                       <div className="text-4xl font-bold font-mono tabular-nums" style={{ color: item.data.color }}>{item.data.aqi}</div>
-                      <span className="text-xs font-medium text-muted">{item.data.category}</span>
+                      <span className="text-xs font-medium text-slate-500 dark:text-slate-400">{item.data.category}</span>
                     </div>
                   </div>
-                  <div className="pt-2 border-t border-forest-800/5 dark:border-white/[0.05] flex items-center justify-between text-[11px] text-muted font-mono">
+                  <div className="pt-2 border-t border-slate-200 dark:border-white/10 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-mono">
                     <span>Primary: {item.data.primaryPollutant}</span>
                     <span role="status" aria-label={`Air Quality Index ${item.data.aqi}, category ${item.data.category}`}>
                       {item.data.aqi} · {item.data.category}
@@ -234,7 +234,7 @@ function CompareContent() {
             <button
               onClick={handleExplainComparison}
               disabled={aiLoading}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-ai-500 hover:bg-ai-600 text-white font-semibold text-xs shadow-resting hover:shadow-elevated transition-all disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-[#10b981] hover:bg-[#34d399] text-[#090d16] font-bold text-xs shadow-[0_0_20px_-3px_rgba(16,185,129,0.4)] transition-all duration-200 hover:scale-[1.02] active:scale-[0.95] disabled:opacity-50"
             >
               {aiLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
               <span>Explain this comparison with UrbanAir AI</span>
@@ -243,7 +243,7 @@ function CompareContent() {
 
           {aiCompare && (
             <div className="space-y-3">
-              <h2 className="text-base font-semibold text-forest-800 dark:text-white tracking-tight">AI Comparative Analysis</h2>
+              <h2 className="text-base font-bold text-slate-900 dark:text-white tracking-tight">AI Comparative Analysis</h2>
               <AIResponseCard
                 data={aiCompare}
                 onOpenExplainability={() => setExplainOpen(true)}
@@ -252,28 +252,28 @@ function CompareContent() {
           )}
 
           {/* Pollutant Measurement Matrix (§21: Missing metric handling) */}
-          <div className="rounded-[20px] bg-white dark:bg-[#0D1B18] border border-forest-800/10 dark:border-white/[0.08] p-6 overflow-x-auto shadow-sm space-y-4">
+          <div className="rounded-2xl glass-card p-6 overflow-x-auto shadow-card space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-sm font-semibold text-forest-800 dark:text-white">Pollutant Measurement Matrix</h2>
-                <p className="text-[11px] text-muted">Only metrics reported by stations are compared; missing indicators are labeled transparently.</p>
+                <h2 className="text-sm font-bold text-slate-900 dark:text-white">Pollutant Measurement Matrix</h2>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">Only metrics reported by stations are compared; missing indicators are labeled transparently.</p>
               </div>
-              <span className="text-[10px] text-muted font-mono">Tabular Numerals · US EPA Scale</span>
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">Tabular Numerals · US EPA Scale</span>
             </div>
 
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-forest-800/10 dark:border-white/[0.08] text-muted">
-                  <th className="py-2.5 px-3 font-semibold">Pollutant Parameter</th>
-                  <th className="py-2.5 px-3 font-semibold">{cityAData.location.name}</th>
-                  <th className="py-2.5 px-3 font-semibold">{cityBData.location.name}</th>
+                <tr className="border-b border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400">
+                  <th className="py-2.5 px-3 font-bold">Pollutant Parameter</th>
+                  <th className="py-2.5 px-3 font-bold">{cityAData.location.name}</th>
+                  <th className="py-2.5 px-3 font-bold">{cityBData.location.name}</th>
                   {showCityC && cityCData && (
-                    <th className="py-2.5 px-3 font-semibold">{cityCData.location.name}</th>
+                    <th className="py-2.5 px-3 font-bold">{cityCData.location.name}</th>
                   )}
-                  <th className="py-2.5 px-3 font-semibold">Environmental Context</th>
+                  <th className="py-2.5 px-3 font-bold">Environmental Context</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-forest-800/5 dark:divide-white/[0.05] text-forest-800 dark:text-slate-200">
+              <tbody className="divide-y divide-slate-200 dark:divide-white/5 text-slate-700 dark:text-slate-200">
                 {[
                   { name: 'AQI (Air Quality Index)', valA: cityAData.aqi, valB: cityBData.aqi, valC: cityCData?.aqi, unit: '' },
                   { name: 'PM2.5 (Fine particulate matter)', valA: cityAData.pollutants.pm25?.value, valB: cityBData.pollutants.pm25?.value, valC: cityCData?.pollutants.pm25?.value, unit: 'µg/m³' },
@@ -289,29 +289,29 @@ function CompareContent() {
 
                   return (
                     <tr key={i}>
-                      <td className="py-3 px-3 font-semibold text-forest-800 dark:text-white">{row.name}</td>
+                      <td className="py-3 px-3 font-bold text-slate-900 dark:text-white">{row.name}</td>
                       <td className="py-3 px-3 font-mono tabular-nums font-semibold">
-                        {hasA ? `${row.valA} ${row.unit}` : <span className="text-muted italic">— not reported</span>}
+                        {hasA ? `${row.valA} ${row.unit}` : <span className="text-slate-400 dark:text-slate-500 italic">— not reported</span>}
                       </td>
                       <td className="py-3 px-3 font-mono tabular-nums font-semibold">
-                        {hasB ? `${row.valB} ${row.unit}` : <span className="text-muted italic">— not reported</span>}
+                        {hasB ? `${row.valB} ${row.unit}` : <span className="text-slate-400 dark:text-slate-500 italic">— not reported</span>}
                       </td>
                       {showCityC && cityCData && (
                         <td className="py-3 px-3 font-mono tabular-nums font-semibold">
-                          {hasC ? `${row.valC} ${row.unit}` : <span className="text-muted italic">— not reported</span>}
+                          {hasC ? `${row.valC} ${row.unit}` : <span className="text-slate-400 dark:text-slate-500 italic">— not reported</span>}
                         </td>
                       )}
-                      <td className="py-3 px-3 text-muted text-xs">
+                      <td className="py-3 px-3 text-slate-600 dark:text-slate-400 text-xs">
                         {hasA && hasB ? (
                           row.valA! < row.valB! ? (
                             <span className="text-emerald-600 dark:text-emerald-400 font-medium">{cityAData.location.name} measures cleaner</span>
                           ) : row.valA! > row.valB! ? (
                             <span className="text-amber-600 dark:text-amber-400 font-medium">{cityBData.location.name} measures cleaner</span>
                           ) : (
-                            <span>Equal measured values</span>
+                            <span className="text-slate-700 dark:text-slate-300">Equal measured values</span>
                           )
                         ) : (
-                          <span className="italic text-[11px]">— not reported for one or more cities</span>
+                          <span className="italic text-[11px] text-slate-400 dark:text-slate-500">— not reported for one or more cities</span>
                         )}
                       </td>
                     </tr>

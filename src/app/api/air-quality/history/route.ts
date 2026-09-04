@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { fetchRawAirQuality } from '@/lib/air-quality/open-meteo';
+import { fetchRawAirQuality, POPULAR_CITIES } from '@/lib/air-quality/open-meteo';
 import { normalizeHistoricalData } from '@/lib/air-quality/normalizer';
 import { CityLocation } from '@/lib/types';
 
@@ -8,11 +8,22 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const lat = parseFloat(searchParams.get('lat') || '28.6139');
-    const lng = parseFloat(searchParams.get('lng') || '77.2090');
-    const name = searchParams.get('name') || 'Delhi';
+    const latStr = searchParams.get('lat');
+    const lngStr = searchParams.get('lng');
+    const name = searchParams.get('name') || searchParams.get('city') || 'Delhi';
     const country = searchParams.get('country') || 'India';
     const tf = (searchParams.get('timeframe') as '24h' | '7d' | '30d') || '24h';
+
+    let lat = latStr ? parseFloat(latStr) : 28.6139;
+    let lng = lngStr ? parseFloat(lngStr) : 77.2090;
+
+    if (!latStr || !lngStr) {
+      const match = POPULAR_CITIES.find(c => c.name.toLowerCase() === name.toLowerCase());
+      if (match) {
+        lat = match.lat;
+        lng = match.lng;
+      }
+    }
 
     const cityLoc: CityLocation = {
       id: `${name.toLowerCase().replace(/\s+/g, '-')}`,

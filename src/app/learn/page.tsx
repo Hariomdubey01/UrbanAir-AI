@@ -132,16 +132,16 @@ export default function LearnPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-entrance">
       
       {/* Header */}
-      <div className="pb-4 border-b border-forest-800/10 dark:border-white/[0.08] space-y-1">
+      <div className="pb-4 border-b border-slate-200 dark:border-white/10 space-y-1">
         <div className="flex items-center gap-2">
           <BookOpen className="w-4 h-4 text-emerald-600 dark:text-emerald-400 stroke-[1.5]" />
-          <span className="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Environmental Education Hub</span>
+          <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">Environmental Education Hub</span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-semibold text-forest-800 dark:text-white tracking-tight">Air Quality 101</h1>
-        <p className="text-muted text-xs">Structured 4-part reference modules covering all 7 primary air pollutants and measurement scales according to WHO 2021 Guidelines.</p>
+        <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">Air Quality 101</h1>
+        <p className="text-slate-500 dark:text-slate-400 text-xs">Structured 4-part reference modules covering all 7 primary air pollutants and measurement scales according to WHO 2021 Guidelines.</p>
       </div>
 
       {/* Topics Grid (§22: 7 modules) */}
@@ -149,38 +149,38 @@ export default function LearnPage() {
         {LEARN_TOPICS.map((topic) => (
           <div
             key={topic.id}
-            className="rounded-[20px] bg-white dark:bg-[#0D1B18] border border-forest-800/10 dark:border-white/[0.08] p-5 hover:border-emerald-500/30 transition-all flex flex-col justify-between space-y-4 shadow-sm"
+            className="rounded-2xl glass-card glass-card-hover p-5 flex flex-col justify-between space-y-4"
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
+                <span className="card-badge-emerald">
                   {topic.category}
                 </span>
-                <span className="text-[10px] text-muted font-mono">{topic.whoLimit}</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">{topic.whoLimit}</span>
               </div>
 
-              <h3 className="text-base font-semibold text-forest-800 dark:text-white">{topic.title}</h3>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">{topic.title}</h3>
               
               {/* 4-Part Structure */}
               <div className="space-y-2 text-xs">
-                <div className="p-2.5 rounded-lg bg-ivory-100 dark:bg-forest-900 border border-forest-800/5 dark:border-white/[0.05]">
-                  <span className="font-semibold text-emerald-600 dark:text-emerald-400 block text-[10px] uppercase">Simple Explanation</span>
-                  <p className="text-forest-800/90 dark:text-slate-200 italic mt-0.5">"{topic.simpleExplanation}"</p>
+                <div className="p-3 rounded-xl inner-panel">
+                  <span className="font-bold text-emerald-700 dark:text-emerald-400 block text-[10px] uppercase">Simple Explanation</span>
+                  <p className="text-slate-700 dark:text-slate-300 italic mt-0.5">"{topic.simpleExplanation}"</p>
                 </div>
 
-                <div className="space-y-1 text-[11px] text-muted">
-                  <div><strong className="text-forest-800 dark:text-slate-200">What it is:</strong> {topic.whatItIs}</div>
-                  <div><strong className="text-forest-800 dark:text-slate-200">Why it matters:</strong> {topic.whyItMatters}</div>
-                  <div><strong className="text-forest-800 dark:text-slate-200">How it's measured:</strong> {topic.howMeasured}</div>
+                <div className="space-y-1 text-[11px] text-slate-500 dark:text-slate-400">
+                  <div><strong className="text-slate-800 dark:text-slate-200">What it is:</strong> {topic.whatItIs}</div>
+                  <div><strong className="text-slate-800 dark:text-slate-200">Why it matters:</strong> {topic.whyItMatters}</div>
+                  <div><strong className="text-slate-800 dark:text-slate-200">How it's measured:</strong> {topic.howMeasured}</div>
                 </div>
               </div>
             </div>
 
             <button
               onClick={() => handleAskAIAboutTopic(topic)}
-              className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-ivory-100 dark:bg-forest-900 hover:bg-ai-500/10 text-forest-800 dark:text-slate-200 hover:text-ai-500 border border-forest-800/10 dark:border-white/[0.08] text-xs font-semibold transition-all shadow-sm"
+              className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 hover:text-emerald-700 dark:hover:text-emerald-300 border border-slate-200 dark:border-slate-700/80 hover:border-emerald-500/40 text-xs font-semibold transition-all active:scale-95 shadow-sm"
             >
-              <Sparkles className="w-3.5 h-3.5 text-ai-500" />
+              <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
               <span>Ask AI about this topic</span>
             </button>
           </div>
@@ -189,14 +189,14 @@ export default function LearnPage() {
 
       {/* Dynamic AI Explanation Section */}
       {selectedTopic && (
-        <div className="pt-6 border-t border-forest-800/10 dark:border-white/[0.08] space-y-4">
-          <div className="flex items-center gap-2 text-ai-500 text-xs font-semibold uppercase tracking-wider">
+        <div className="pt-6 border-t border-slate-200 dark:border-white/10 space-y-4">
+          <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 text-xs font-bold uppercase tracking-wider">
             <Sparkles className="w-4 h-4" />
             <span>AI Deep-Dive Explanation: {selectedTopic.title}</span>
           </div>
 
           {loading ? (
-            <div className="p-8 text-center rounded-[20px] bg-white dark:bg-[#0D1B18] border border-forest-800/10 dark:border-white/[0.08] text-muted text-xs">
+            <div className="p-8 text-center rounded-2xl glass-card text-slate-500 dark:text-slate-400 text-xs">
               Generating grounded educational insight with verified RAG knowledge citation...
             </div>
           ) : aiData ? (

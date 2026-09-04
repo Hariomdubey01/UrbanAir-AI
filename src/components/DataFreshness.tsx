@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { getDataFreshness, FreshnessInfo } from '@/lib/air-quality/pollutants';
@@ -64,9 +64,9 @@ export default function DataFreshness({
     badgeBorder = 'border-amber-500/20 bg-amber-500/10';
     statusText = '● Latest available reading';
   } else if (effectiveStatus === 'unavailable') {
-    dotColor = 'bg-muted';
-    textColor = 'text-muted';
-    badgeBorder = 'border-forest-800/10 bg-forest-800/5';
+    dotColor = 'bg-slate-400';
+    textColor = 'text-slate-600 dark:text-slate-400';
+    badgeBorder = 'border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800/50';
     statusText = '● Data freshness unavailable';
   }
 
@@ -109,10 +109,10 @@ export default function DataFreshness({
         )}
 
         {/* Dynamic Relative Timestamp and Source */}
-        <div className="flex items-center gap-2 text-muted text-[11px]">
+        <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-[11px]">
           {effectiveStatus !== 'demo' && <span>{freshnessInfo.relativeTime}</span>}
           <span>·</span>
-          <span aria-label={ariaSourceLabel}>Source: <strong>{effectiveSource}</strong></span>
+          <span aria-label={ariaSourceLabel}>Source: <strong className="text-slate-700 dark:text-slate-200">{effectiveSource}</strong></span>
         </div>
       </div>
 

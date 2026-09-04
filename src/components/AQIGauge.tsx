@@ -46,17 +46,17 @@ export default function AQIGauge({
   };
 
   return (
-    <div className="relative overflow-hidden rounded-[20px] bg-white dark:bg-[#0D1B18] border border-forest-800/10 dark:border-white/[0.08] p-6 sm:p-8 space-y-6 shadow-sm">
+    <div className="relative overflow-hidden rounded-2xl glass-card p-6 sm:p-8 space-y-6">
       
       {/* Header with MEASURED label */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-forest-800/10 dark:border-white/[0.08]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-white/10">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold text-teal-600 dark:text-teal-400 uppercase tracking-widest">MEASURED TELEMETRY</span>
-            <span className="text-muted text-xs">·</span>
-            <span className="text-xs font-medium text-muted">Current Air Quality Index</span>
+            <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-widest">MEASURED TELEMETRY</span>
+            <span className="text-slate-400 text-xs">·</span>
+            <span className="text-xs font-medium text-slate-600 dark:text-slate-400">Current Air Quality Index</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-semibold text-forest-800 dark:text-white tracking-tight mt-0.5">{locationName}</h2>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-0.5">{locationName}</h2>
         </div>
 
         {/* Status Chip with ARIA §06, §38 */}
@@ -64,7 +64,7 @@ export default function AQIGauge({
           <span
             role="status"
             aria-label={aqiAriaLabel}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-white font-bold text-xs shadow-sm max-w-full truncate"
+            className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-white font-bold text-xs shadow-md max-w-full truncate border border-white/10"
             style={{ backgroundColor: color }}
           >
             {getCategoryIcon(category)}
@@ -80,63 +80,62 @@ export default function AQIGauge({
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-baseline gap-4 sm:gap-6">
           <span 
-            className="text-6xl sm:text-7xl md:text-8xl font-bold font-mono tabular-nums tracking-tight"
+            className="text-6xl sm:text-7xl md:text-8xl font-black font-mono tabular-nums tracking-tight drop-shadow-md"
             style={{ color }}
           >
             {aqi}
           </span>
           
           <div className="space-y-1">
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted font-mono">US EPA STANDARD</span>
-            <div className="text-sm sm:text-base font-medium text-forest-800 dark:text-slate-200 max-w-xs">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 font-mono">US EPA STANDARD</span>
+            <div className="text-sm sm:text-base font-semibold text-slate-800 dark:text-slate-200 max-w-xs">
               {aqi <= 50 ? 'Satisfactory clean air with minimal risk' : aqi <= 100 ? 'Acceptable ambient air quality' : aqi <= 150 ? 'Unhealthy for sensitive groups' : aqi <= 200 ? 'Everyone may begin to experience health effects' : aqi <= 300 ? 'Health alert: risk of health effects increased for everyone' : 'Emergency conditions: health warnings for all'}
             </div>
-            <div className="text-xs text-muted">
+            <div className="text-xs text-slate-500 dark:text-slate-400">
               Primary air quality score for {locationName}
             </div>
           </div>
         </div>
 
         {/* Clean Refined Gauge Meter */}
-        <div className="w-full md:w-72 space-y-2.5 bg-ivory-100 dark:bg-forest-900 p-4 rounded-xl border border-forest-800/10 dark:border-white/[0.08]">
-          <div className="flex justify-between text-[10px] font-semibold text-muted">
+        <div className="w-full md:w-72 space-y-2.5 telemetry-panel p-4 rounded-xl shadow-inner">
+          <div className="flex justify-between text-[10px] font-semibold text-slate-500 dark:text-slate-400">
             <span>Good (0)</span>
             <span>Moderate</span>
             <span>Unhealthy</span>
             <span>Hazardous (300+)</span>
           </div>
 
-          <div className="relative h-3 rounded-full bg-ivory-300 dark:bg-forest-700 p-0.5 overflow-hidden">
+          <div className="relative h-3 rounded-full bg-slate-200 dark:bg-slate-950 p-0.5 overflow-hidden border border-slate-300/60 dark:border-white/5">
             <div className="w-full h-full rounded-full bg-gradient-to-r from-emerald-500 via-amber-400 via-orange-500 via-red-500 via-purple-600 to-rose-900" />
             <div 
-              className="absolute top-0 bottom-0 w-3 -ml-1.5 rounded-full bg-white shadow-sm border-2 border-forest-800 transition-all duration-700"
+              className="absolute top-0 bottom-0 w-3 -ml-1.5 rounded-full bg-white shadow-md border-2 border-slate-900 transition-all duration-1000 ease-out"
               style={{ left: `${percentage}%` }}
               title={`AQI Needle: ${aqi}`}
             />
           </div>
 
-
-          <div className="text-right text-[11px] font-medium text-forest-800 dark:text-slate-300">
-            Active needle at <strong className="text-emerald-600 dark:text-emerald-400 font-bold font-mono tabular-nums">{aqi} AQI</strong>
+          <div className="text-right text-[11px] font-medium text-slate-600 dark:text-slate-300">
+            Active needle at <strong className="text-emerald-700 dark:text-emerald-400 font-bold font-mono tabular-nums">{aqi} AQI</strong>
           </div>
         </div>
       </div>
 
       {/* Footer Info with Data Trust & Staleness Indicators */}
-      <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-muted pt-3 border-t border-forest-800/10 dark:border-white/[0.08]">
+      <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400 pt-3 border-t border-slate-200 dark:border-white/10">
         <div className="flex items-center gap-2" aria-label={freshnessAriaLabel}>
           <span className={`w-2 h-2 rounded-full ${freshnessInfo.isStale ? 'bg-rose-500' : freshnessInfo.isRecent ? 'bg-amber-500' : 'bg-emerald-500 animate-pulse'}`} />
-          <span className={freshnessInfo.isStale ? 'text-rose-600 dark:text-rose-400 font-semibold' : 'text-forest-800/90 dark:text-slate-300 font-medium'}>
+          <span className={freshnessInfo.isStale ? 'text-rose-600 dark:text-rose-400 font-semibold' : 'text-slate-800 dark:text-slate-200 font-medium'}>
             {freshnessInfo.badgeLabel}
           </span>
-          <span className="text-muted hidden sm:inline">·</span>
-          <span className="text-muted text-[11px] font-mono">
+          <span className="text-slate-400 dark:text-slate-500 hidden sm:inline">·</span>
+          <span className="text-slate-500 dark:text-slate-400 text-[11px] font-mono">
             {freshnessInfo.relativeTime}
           </span>
         </div>
 
-        <div className="truncate max-w-md text-muted text-[11px] font-mono" aria-label={sourceAriaLabel}>
-          Source: <strong>{effectiveSource}</strong>
+        <div className="truncate max-w-md text-slate-500 dark:text-slate-400 text-[11px] font-mono" aria-label={sourceAriaLabel}>
+          Source: <strong className="text-slate-700 dark:text-slate-300">{effectiveSource}</strong>
         </div>
       </div>
 

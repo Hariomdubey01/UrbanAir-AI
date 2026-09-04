@@ -13,14 +13,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const nameA = cityA.location?.name || cityA.name || 'City A';
+    const aqiA = cityA.aqi ?? 'N/A';
+    const nameB = cityB.location?.name || cityB.name || 'City B';
+    const aqiB = cityB.aqi ?? 'N/A';
+    const nameC = cityC?.location?.name || cityC?.name || 'City C';
+    const aqiC = cityC?.aqi ?? 'N/A';
+
     const question = cityC
-      ? `Compare air quality between ${cityA.location.name} (AQI ${cityA.aqi}), ${cityB.location.name} (AQI ${cityB.aqi}), and ${cityC.location.name} (AQI ${cityC.aqi}). Detail pollutant levels (PM2.5, PM10, NO2) and rank clean air conditions.`
-      : `Explain the comparison between ${cityA.location.name} (AQI ${cityA.aqi}) and ${cityB.location.name} (AQI ${cityB.aqi}). Which city has better air quality and why?`;
+      ? `Compare air quality between ${nameA} (AQI ${aqiA}), ${nameB} (AQI ${aqiB}), and ${nameC} (AQI ${aqiC}). Detail pollutant levels (PM2.5, PM10, NO2) and rank clean air conditions.`
+      : `Explain the comparison between ${nameA} (AQI ${aqiA}) and ${nameB} (AQI ${aqiB}). Which city has better air quality and why?`;
 
     const aiResult = await generateAIExplanation({
       question,
       compareAirQuality: { cityA, cityB },
-      locationName: cityA.location.name,
+      locationName: nameA,
     });
 
     return NextResponse.json(aiResult);

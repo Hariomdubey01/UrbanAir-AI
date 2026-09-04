@@ -67,31 +67,31 @@ function LocationDetailContent() {
 
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-entrance">
       
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-forest-800/10 dark:border-white/[0.08]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/10">
         <div>
           <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-emerald-600 dark:text-emerald-400 stroke-[1.5]" />
-            <span className="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Detailed Environmental Profile</span>
+            <MapPin className="w-4 h-4 text-emerald-400 stroke-[1.5]" />
+            <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">Detailed Environmental Profile</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-forest-800 dark:text-white tracking-tight mt-0.5">{name}, {country}</h1>
-          <p className="text-muted text-xs font-mono">LAT: {lat.toFixed(2)}° · LNG: {lng.toFixed(2)}°</p>
+          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight mt-0.5">{name}, {country}</h1>
+          <p className="text-slate-400 text-xs font-mono">LAT: {lat.toFixed(2)}° · LNG: {lng.toFixed(2)}°</p>
         </div>
 
         <div className="flex items-center gap-2.5">
           <Link
             href={`/compare?cityA=${encodeURIComponent(name)}`}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white dark:bg-[#0D1B18] hover:bg-ivory-200 dark:hover:bg-forest-900 text-forest-800 dark:text-slate-200 text-xs font-semibold border border-forest-800/15 dark:border-white/[0.08] transition-all shadow-sm"
+            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-200 text-xs font-bold border border-slate-700/80 hover:border-white/20 transition-all shadow-sm active:scale-95"
           >
-            <ArrowLeftRight className="w-3.5 h-3.5 text-teal-500" />
+            <ArrowLeftRight className="w-3.5 h-3.5 text-teal-400" />
             <span>Compare {name}</span>
           </Link>
 
           <Link
             href={`/ai?city=${encodeURIComponent(name)}&q=${encodeURIComponent(`Why is air quality in ${name} currently ${airQuality?.category || 'at this level'}?`)}`}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-ai-500 text-white text-xs font-semibold hover:bg-ai-600 transition-all shadow-sm"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#10b981] hover:bg-[#34d399] text-[#090d16] text-xs font-bold shadow-[0_0_20px_-3px_rgba(16,185,129,0.4)] transition-all active:scale-95"
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>Ask AI About {name}</span>
@@ -100,9 +100,9 @@ function LocationDetailContent() {
       </div>
 
       {loading || !airQuality ? (
-        <div className="p-12 text-center rounded-[20px] bg-white dark:bg-[#0D1B18] border border-forest-800/10 dark:border-white/[0.08] space-y-2">
-          <RefreshCw className="w-6 h-6 text-emerald-500 animate-spin mx-auto" />
-          <p className="text-xs text-muted font-semibold">Loading location telemetry for {name}...</p>
+        <div className="p-12 text-center rounded-2xl bg-[rgba(15,23,42,0.75)] backdrop-blur-md border border-white/10 space-y-2">
+          <RefreshCw className="w-6 h-6 text-emerald-400 animate-spin mx-auto" />
+          <p className="text-xs text-slate-400 font-bold">Loading location telemetry for {name}...</p>
         </div>
       ) : (
         <div className="space-y-8">
@@ -139,7 +139,7 @@ function LocationDetailContent() {
           </div>
 
           <div className="space-y-3">
-            <h2 className="text-base font-semibold text-forest-800 dark:text-white tracking-tight">Pollutant Telemetry Breakdown</h2>
+            <h2 className="text-base font-bold text-white tracking-tight">Pollutant Telemetry Breakdown</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {Object.values(airQuality.pollutants).map((p) => (
                 p && (

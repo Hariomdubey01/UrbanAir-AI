@@ -1,12 +1,23 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Plus_Jakarta_Sans, Inter } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import PersistentAIButton from '@/components/PersistentAIButton';
 
-const inter = Inter({ subsets: ['latin'] });
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-plus-jakarta',
+  display: 'swap',
+  weight: ['400', '500', '600', '700', '800'],
+});
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: "UrbanAir AI — Understand Your City's Air",
@@ -44,18 +55,33 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
-      <body className={`${inter.className} min-h-screen flex flex-col bg-bg-base dark:bg-bg-base-dark text-text-primary dark:text-slate-100 transition-colors duration-200`}>
+    <html lang="en" className={`scroll-smooth dark ${plusJakarta.variable} ${inter.variable}`} suppressHydrationWarning>
+      <body className="min-h-screen flex flex-col bg-[#f8fafc] dark:bg-[#090d16] text-slate-800 dark:text-[#cbd5e1] font-sans antialiased selection:bg-[#10b981] selection:text-[#090d16] relative overflow-x-hidden transition-colors duration-300">
+        {/* Global Canvas Ambient Layers (§1, §2, §3, §4, §5) */}
+        <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+          {/* Subtle Technical Grid (§5) */}
+          <div className="absolute inset-0 bg-grid-pattern opacity-25 dark:opacity-60 transition-opacity duration-300" />
+          {/* Radial Emerald Spotlight (§2) */}
+          <div className="absolute inset-0 radial-emerald-spotlight opacity-30 dark:opacity-100 transition-opacity duration-300" />
+          {/* Ambient Emerald Glow (§3) */}
+          <div className="absolute top-[-150px] left-1/2 -translate-x-1/2 ambient-emerald-glow opacity-5 dark:opacity-10 animate-ambient-slow transition-opacity duration-300" />
+          {/* Secondary Amber Atmosphere (§4) */}
+          <div className="absolute top-[40%] -right-24 ambient-amber-glow opacity-5 dark:opacity-10 animate-ambient-slow transition-opacity duration-300" />
+        </div>
+
         <ThemeProvider>
-          <Navbar />
-          <main className="flex-1">
-            {children}
-          </main>
-          <PersistentAIButton />
-          <Footer />
+          <div className="relative z-10 flex flex-col min-h-screen">
+            <Navbar />
+            <main className="flex-1">
+              {children}
+            </main>
+            <PersistentAIButton />
+            <Footer />
+          </div>
         </ThemeProvider>
       </body>
     </html>
   );
 }
+
 

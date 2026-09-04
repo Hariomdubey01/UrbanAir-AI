@@ -147,39 +147,39 @@ I am currently connected to live air telemetry for **${selectedCity.name}, ${sel
   ];
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 animate-entrance">
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-forest-800/10 dark:border-white/[0.08]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-white/10">
         <div>
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-ai-500" />
-            <span className="text-xs font-semibold uppercase tracking-wider text-ai-500">Interactive AI Advisor</span>
+            <Sparkles className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
+            <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Interactive AI Advisor</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-forest-800 dark:text-white tracking-tight mt-0.5">Ask UrbanAir AI</h1>
-          <p className="text-muted text-xs">Grounded environmental explanations, WHO guideline citations, and SDG 11 awareness.</p>
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">Ask UrbanAir AI</h1>
+          <p className="text-slate-500 dark:text-slate-400 text-xs">Grounded environmental explanations, WHO guideline citations, and SDG 11 awareness.</p>
         </div>
 
         <button
           onClick={() => setSearchOpen(true)}
-          className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white dark:bg-[#0D1B18] hover:bg-ivory-200 dark:hover:bg-forest-900 text-forest-800 dark:text-white text-xs font-semibold border border-forest-800/15 dark:border-white/[0.08] transition-all shadow-sm"
+          className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-900/80 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-800 dark:text-white text-xs font-bold border border-slate-300 dark:border-slate-700/80 hover:border-slate-400 dark:hover:border-white/20 transition-all shadow-sm"
         >
-          <MapPin className="w-4 h-4 text-emerald-500" />
+          <MapPin className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           <span>Active Context: <strong>{conversationCityName || selectedCity.name}</strong></span>
         </button>
       </div>
 
       {/* Suggested Inquiries */}
       <div className="space-y-1.5">
-        <div className="text-[10px] font-semibold text-muted uppercase tracking-wider">Suggested Inquiries:</div>
+        <div className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Suggested Inquiries:</div>
         <div className="flex items-center gap-2 overflow-x-auto pb-1">
           {suggestedQuestions.map((sq, i) => (
             <button
               key={i}
               onClick={() => handleSendMessage(sq.q)}
-              className="px-3 py-1.5 rounded-xl bg-white dark:bg-[#0D1B18] hover:bg-ai-500/10 text-forest-800 dark:text-slate-200 hover:text-ai-500 border border-forest-800/10 dark:border-white/[0.08] text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 shadow-sm"
+              className="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-900/80 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-300 border border-slate-200 dark:border-slate-700/80 hover:border-emerald-500/40 text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 shadow-sm active:scale-95"
             >
-              <Sparkles className="w-3 h-3 text-ai-500" />
+              <Sparkles className="w-3 h-3 text-indigo-500 dark:text-indigo-400" />
               <span>{sq.q}</span>
             </button>
           ))}
@@ -187,21 +187,21 @@ I am currently connected to live air telemetry for **${selectedCity.name}, ${sel
       </div>
 
       {/* Chat Thread Container */}
-      <div className="min-h-[440px] rounded-[20px] bg-white dark:bg-[#0D1B18] border border-forest-800/10 dark:border-white/[0.08] p-5 sm:p-7 space-y-6 flex flex-col justify-between shadow-sm">
+      <div className="min-h-[440px] rounded-2xl glass-card p-5 sm:p-7 space-y-6 flex flex-col justify-between shadow-card">
         <div className="space-y-5">
           {messages.map((msg) => (
             <div
               key={msg.id}
               className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
             >
-              <div className="flex items-center gap-2 text-[10px] text-muted mb-1 px-1 font-mono">
+              <div className="flex items-center gap-2 text-[10px] text-slate-500 dark:text-slate-400 mb-1 px-1 font-mono">
                 <span>{msg.role === 'user' ? 'You' : 'UrbanAir AI'}</span>
                 <span>•</span>
                 <span>{msg.timestamp}</span>
               </div>
 
               {msg.role === 'user' ? (
-                <div className="max-w-xl p-3.5 px-4 rounded-xl bg-emerald-500 text-white font-medium text-xs sm:text-sm shadow-sm">
+                <div className="max-w-xl p-3.5 px-4 rounded-xl bg-emerald-500 text-[#090d16] font-bold text-xs sm:text-sm shadow-sm">
                   {msg.content}
                 </div>
               ) : msg.aiResponse ? (
@@ -212,16 +212,32 @@ I am currently connected to live air telemetry for **${selectedCity.name}, ${sel
                   />
                 </div>
               ) : (
-                <div className="max-w-2xl p-4.5 rounded-xl bg-ivory-100 dark:bg-forest-900 border border-forest-800/10 dark:border-white/[0.08] text-forest-800 dark:text-slate-200 text-xs sm:text-sm leading-relaxed font-normal whitespace-pre-line space-y-2">
-                  {msg.content}
+                <div className="max-w-2xl p-5 sm:p-6 rounded-2xl glass-card border border-slate-200 dark:border-white/10 dark:border-t-white/15 border-l-4 border-l-emerald-500 dark:border-l-emerald-400 text-slate-800 dark:text-slate-200 text-xs sm:text-sm leading-relaxed font-normal space-y-2 shadow-sm">
+                  {msg.content.split('\n\n').map((paragraph, pIdx) => {
+                    const parts = paragraph.split(/(\*\*.*?\*\*)/g);
+                    return (
+                      <p key={pIdx}>
+                        {parts.map((part, idx) => {
+                          if (part.startsWith('**') && part.endsWith('**')) {
+                            return (
+                              <strong key={idx} className="font-semibold text-slate-900 dark:text-white">
+                                {part.slice(2, -2)}
+                              </strong>
+                            );
+                          }
+                          return part;
+                        })}
+                      </p>
+                    );
+                  })}
                 </div>
               )}
             </div>
           ))}
 
           {loading && (
-            <div className="flex items-center gap-2.5 p-3.5 rounded-xl bg-ai-500/10 border border-ai-500/20 text-ai-500 text-xs font-semibold animate-pulse">
-              <RefreshCw className="w-3.5 h-3.5 animate-spin text-ai-500" />
+            <div className="flex items-center gap-2.5 p-3.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-300 text-xs font-semibold animate-pulse">
+              <RefreshCw className="w-3.5 h-3.5 animate-spin text-indigo-500 dark:text-indigo-400" />
               <span>Resolving location context, fetching verified telemetry, and formulating insight...</span>
             </div>
           )}
@@ -230,7 +246,7 @@ I am currently connected to live air telemetry for **${selectedCity.name}, ${sel
         </div>
 
         {/* Input Bar */}
-        <div className="pt-3 border-t border-forest-800/10 dark:border-white/[0.08]">
+        <div className="pt-3 border-t border-slate-200 dark:border-white/10">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -243,13 +259,13 @@ I am currently connected to live air telemetry for **${selectedCity.name}, ${sel
               placeholder={`Ask about AQI, PM2.5 in ${conversationCityName}, WHO guidelines, or compare cities...`}
               value={inputQuery}
               onChange={(e) => setInputQuery(e.target.value)}
-              className="flex-1 bg-ivory-100 dark:bg-forest-900 border border-forest-800/15 dark:border-white/[0.08] rounded-xl px-4 py-3 text-xs sm:text-sm text-forest-800 dark:text-white placeholder-muted focus:outline-none focus:border-ai-500"
+              className="flex-1 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700/80 rounded-xl px-4 py-3 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors"
             />
 
             <button
               type="submit"
               disabled={loading || !inputQuery.trim()}
-              className="px-5 py-3 rounded-xl bg-ai-500 hover:bg-ai-600 text-white font-semibold text-xs sm:text-sm transition-all disabled:opacity-40 flex items-center gap-1.5 shadow-sm"
+              className="px-5 py-3 rounded-xl bg-[#10b981] hover:bg-[#34d399] text-[#090d16] font-bold text-xs sm:text-sm transition-all disabled:opacity-40 flex items-center gap-1.5 shadow-[0_0_20px_-3px_rgba(16,185,129,0.4)] active:scale-95"
             >
               <span>Send</span>
               <Send className="w-3.5 h-3.5" />

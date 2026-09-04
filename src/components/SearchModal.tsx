@@ -1,22 +1,62 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { Search, MapPin, Navigation, X, Loader2, AlertCircle } from 'lucide-react';
 import { CityLocation } from '@/lib/types';
 import { POPULAR_CITIES } from '@/lib/air-quality/open-meteo';
 
-interface SearchModalProps {
+export interface SearchModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectCity: (city: CityLocation) => void;
 }
 
 export default function SearchModal({ isOpen, onClose, onSelectCity }: SearchModalProps) {
+  const [mounted, setMounted] = useState(false);
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<CityLocation[]>(POPULAR_CITIES);
   const [loading, setLoading] = useState(false);
   const [geoLoading, setGeoLoading] = useState(false);
   const [geoError, setGeoError] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Lock body scroll and focus input when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      const focusTimer = setTimeout(() => {
+        inputRef.current?.focus();
+      }, 50);
+      return () => clearTimeout(focusTimer);
+    } else {
+      document.body.style.overflow = '';
+      setGeoError(null);
+    }
+  }, [isOpen]);
+
+  // Clean up body overflow on unmount
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+
+  // Escape key closes modal
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   useEffect(() => {
     if (!query || query.trim().length < 2) {
@@ -27,7 +67,7 @@ export default function SearchModal({ isOpen, onClose, onSelectCity }: SearchMod
     const timer = setTimeout(async () => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/location/search?q=${encodeURIComponent(query)}`);
+        const res = await fetch(`/api/location/search?q=${encodeURIComponent(query.trim())}`);
         const data = await res.json();
         if (data.success && data.results) {
           setResults(data.results);
@@ -47,8 +87,8 @@ export default function SearchModal({ isOpen, onClose, onSelectCity }: SearchMod
 
   const handleUseMyLocation = () => {
     setGeoError(null);
-    if (!navigator.geolocation) {
-      setGeoError("Location access was declined. You can still search any city above.");
+    if (typeof window === 'undefined' || !navigator.geolocation) {
+      setGeoError("Location access is not supported by your browser. You can still search any city above.");
       return;
     }
 
@@ -69,83 +109,115 @@ export default function SearchModal({ isOpen, onClose, onSelectCity }: SearchMod
       },
       (err) => {
         setGeoLoading(false);
-        setGeoError("Location access was declined. You can still search any city above.");
-      }
+        if (err.code === 1) {
+          setGeoError("Location access was declined. You can still search any city above.");
+        } else if (err.code === 3) {
+          setGeoError("Location request timed out. You can still search any city above.");
+        } else {
+          setGeoError("Location access was declined. You can still search any city above.");
+        }
+      },
+      { timeout: 10000, maximumAge: 60000 }
     );
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-4 pt-16 sm:pt-4 bg-forest-800/60 dark:bg-black/80 backdrop-blur-md animate-fade-in">
-      <div className="relative w-full max-w-xl rounded-[20px] bg-ivory-100 dark:bg-[#0D1B18] border border-forest-800/15 dark:border-white/[0.08] p-6 space-y-4 shadow-2xl">
-        
-        {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-forest-800/10 dark:border-white/[0.08]">
-          <div className="flex items-center gap-2">
-            <Search className="w-5 h-5 text-emerald-500" />
-            <h3 className="font-semibold text-base text-forest-800 dark:text-white">Search City Air Quality</h3>
+  const modalContent = (
+    <div
+      className="fixed inset-0 z-[9990] flex items-center justify-center p-3 sm:p-4 bg-black/60 dark:bg-black/80 backdrop-blur-md"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
+    >
+      <div
+        className="relative z-[9991] w-[calc(100vw-24px)] sm:w-[min(720px,calc(100vw-32px))] max-h-[calc(100dvh-24px)] sm:max-h-[calc(100dvh-32px)] flex flex-col rounded-2xl bg-white dark:bg-[#0c1322]/95 backdrop-blur-2xl border border-slate-200 dark:border-white/10 shadow-2xl overflow-hidden animate-modal-in"
+      >
+        {/* Header - Stays fixed inside modal shell */}
+        <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-slate-200 dark:border-white/10 shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-500/20">
+              <Search className="w-4 h-4" />
+            </div>
+            <h3 className="font-bold text-base text-slate-900 dark:text-white tracking-tight">
+              Search City Air Quality
+            </h3>
           </div>
-          <button onClick={onClose} className="p-1 rounded-lg text-muted hover:text-forest-800 dark:hover:text-white">
+          <button
+            onClick={onClose}
+            className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition-colors active:scale-95"
+            aria-label="Close search modal"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Input Bar */}
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search a city, region or country (e.g. Lagos, Jakarta, São Paulo)..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            autoFocus
-            className="w-full bg-white dark:bg-forest-900 border border-forest-800/15 dark:border-white/[0.08] rounded-xl pl-10 pr-10 py-3 text-sm text-forest-800 dark:text-white placeholder-muted focus:outline-none focus:border-emerald-500"
-          />
-          <Search className="absolute left-3.5 top-3.5 w-4 h-4 text-muted" />
-          {loading && <Loader2 className="absolute right-3.5 top-3.5 w-4 h-4 text-emerald-500 animate-spin" />}
-        </div>
-
-        {/* GPS Location CTA & Error Notice */}
-        <div className="space-y-1.5">
-          <button
-            onClick={handleUseMyLocation}
-            disabled={geoLoading}
-            className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 text-xs font-semibold transition-all"
-          >
-            {geoLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Navigation className="w-4 h-4 text-emerald-500" />}
-            <span>Use My Location</span>
-          </button>
-
-          <p className="text-[10px] text-muted text-center px-2 leading-relaxed">
-            Location access is used only when you choose to use your current location. Coordinates are used transiently to retrieve environmental data and are not intentionally stored by UrbanAir AI.
-          </p>
-
-          {geoError && (
-            <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 text-xs font-medium mt-2 px-1">
-              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-              <span>{geoError}</span>
-            </div>
-          )}
-        </div>
-
-
-        {/* Results List */}
-        <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
-          <div className="text-[10px] font-semibold text-muted uppercase tracking-wider px-1">
-            {query.length >= 2 ? 'Search Results' : 'Popular Cities'}
+        {/* Controls Area - Stays fixed inside modal shell */}
+        <div className="px-5 sm:px-6 pt-4 pb-2 space-y-3 shrink-0">
+          {/* Input Bar */}
+          <div className="relative">
+            <input
+              ref={inputRef}
+              type="text"
+              placeholder="Search a city, region or country (e.g. Lagos, Jakarta, São Paulo)..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="w-full bg-slate-50 dark:bg-slate-900/90 border border-slate-300 dark:border-slate-700/80 rounded-xl pl-10 pr-10 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
+            />
+            <Search className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-400 pointer-events-none" />
+            {loading && (
+              <Loader2 className="absolute right-3.5 top-3.5 w-4 h-4 text-emerald-600 dark:text-emerald-400 animate-spin pointer-events-none" />
+            )}
           </div>
 
+          {/* GPS Location CTA & Privacy Notice */}
+          <div className="space-y-1.5">
+            <button
+              onClick={handleUseMyLocation}
+              disabled={geoLoading}
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-emerald-800 dark:bg-slate-900/90 dark:hover:bg-slate-800 dark:text-emerald-300 border border-slate-200 dark:border-slate-700/80 hover:border-emerald-500/40 text-xs font-semibold transition-all shadow-sm active:scale-[0.99] disabled:opacity-50"
+            >
+              {geoLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Navigation className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              )}
+              <span>Use My Location</span>
+            </button>
+
+            <p className="text-[10px] text-slate-500 dark:text-slate-400 text-center px-2 leading-relaxed">
+              Location access is used only when you choose to use your current location. Coordinates are used transiently to retrieve environmental data and are not intentionally stored by UrbanAir AI.
+            </p>
+
+            {geoError && (
+              <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-400 text-xs font-medium px-2 py-1.5 bg-amber-50 dark:bg-amber-500/10 rounded-lg border border-amber-200 dark:border-amber-500/20">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                <span>{geoError}</span>
+              </div>
+            )}
+          </div>
+
+          {/* List Section Heading */}
+          <div className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-1 pt-1">
+            {query.trim().length >= 2 ? 'Search Results' : 'Popular Cities'}
+          </div>
+        </div>
+
+        {/* Scrollable Cities Area - Only this area scrolls internally */}
+        <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-5 sm:px-6 pb-5 pt-1 city-scroll">
           {results.length === 0 ? (
-            <div className="p-6 text-center rounded-xl bg-white/60 dark:bg-forest-900/60 border border-forest-800/10 dark:border-white/[0.08] space-y-1">
-              <p className="text-xs text-forest-800 dark:text-slate-200 font-semibold">
+            <div className="p-8 text-center rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80 space-y-1">
+              <p className="text-xs text-slate-900 dark:text-slate-200 font-semibold">
                 No match found
               </p>
-              <p className="text-xs text-muted">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 Try a city, region or country, e.g. <em>Lagos</em>, <em>Jakarta</em>, or <em>São Paulo</em>.
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               {results.map((city) => (
                 <button
                   key={city.id}
@@ -153,14 +225,18 @@ export default function SearchModal({ isOpen, onClose, onSelectCity }: SearchMod
                     onSelectCity(city);
                     onClose();
                   }}
-                  className="flex items-center gap-3 p-2.5 rounded-xl bg-white dark:bg-forest-900 hover:bg-ivory-200 dark:hover:bg-forest-800 border border-forest-800/10 dark:border-white/[0.08] text-left transition-all group"
+                  className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100/90 dark:bg-slate-900/70 dark:hover:bg-slate-800/80 border border-slate-200 dark:border-slate-800 hover:border-emerald-500/40 dark:hover:border-emerald-500/40 text-left transition-all duration-150 group shadow-sm"
                 >
-                  <div className="w-7 h-7 rounded-lg bg-ivory-100 dark:bg-forest-800 flex items-center justify-center group-hover:bg-emerald-500/20 transition-colors">
-                    <MapPin className="w-3.5 h-3.5 text-muted group-hover:text-emerald-500" />
+                  <div className="w-8 h-8 rounded-lg bg-slate-200/70 dark:bg-slate-950 flex items-center justify-center border border-slate-300/40 dark:border-white/5 group-hover:bg-emerald-500/15 group-hover:border-emerald-500/30 transition-colors shrink-0">
+                    <MapPin className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors" />
                   </div>
-                  <div>
-                    <div className="font-semibold text-xs text-forest-800 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{city.name}</div>
-                    <div className="text-[10px] text-muted">{city.country} {city.region ? `• ${city.region}` : ''}</div>
+                  <div className="min-w-0 flex-1">
+                    <div className="font-semibold text-xs text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate">
+                      {city.name}
+                    </div>
+                    <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
+                      {city.country} {city.region ? `• ${city.region}` : ''}
+                    </div>
                   </div>
                 </button>
               ))}
@@ -171,5 +247,7 @@ export default function SearchModal({ isOpen, onClose, onSelectCity }: SearchMod
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }
 

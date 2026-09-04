@@ -27,14 +27,14 @@ export default function CityMap({
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div className="relative overflow-hidden rounded-[20px] bg-white dark:bg-[#0D1B18] border border-forest-800/10 dark:border-white/[0.08] p-5 space-y-3 shadow-sm">
+    <div className="relative overflow-hidden rounded-[20px] glass-card p-5 space-y-3 shadow-sm">
       {/* Top Telemetry Header */}
       <div className="flex items-center justify-between text-xs">
-        <div className="flex items-center gap-1.5 font-semibold text-forest-800 dark:text-white">
-          <Globe className="w-4 h-4 text-teal-500" />
+        <div className="flex items-center gap-1.5 font-semibold text-slate-900 dark:text-white">
+          <Globe className="w-4 h-4 text-teal-600 dark:text-teal-400" />
           <span>Spatial Sensor Grid</span>
         </div>
-        <div className="flex items-center gap-2 text-muted font-mono text-[11px]">
+        <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 font-mono text-[11px]">
           <span>LAT: {lat.toFixed(2)}°</span>
           <span>LNG: {lng.toFixed(2)}°</span>
         </div>
@@ -44,7 +44,7 @@ export default function CityMap({
       <div
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="relative h-48 sm:h-52 rounded-xl bg-ivory-100 dark:bg-forest-900 border border-forest-800/10 dark:border-white/[0.08] overflow-hidden flex items-center justify-center cursor-pointer transition-all"
+        className="relative h-48 sm:h-52 rounded-xl bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-white/10 overflow-hidden flex items-center justify-center cursor-pointer transition-all"
       >
         {/* Geographic Grid Pattern */}
         <div 
@@ -66,7 +66,7 @@ export default function CityMap({
             <div 
               className={`w-11 h-11 rounded-xl flex items-center justify-center shadow-md transition-all ${
                 isHovered
-                  ? 'ring-4 ring-ai-500/50 bg-teal-500/20'
+                  ? 'ring-4 ring-indigo-500/50 bg-teal-500/20'
                   : 'ring-2 ring-emerald-500/30 bg-teal-500/10'
               }`}
               style={{ border: `2px solid #20A86B` }}
@@ -77,7 +77,7 @@ export default function CityMap({
             {/* Stale Data Marker: Small amber corner flag (§20) */}
             {isStale && (
               <span
-                className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-amber-500 border border-white dark:border-forest-900 flex items-center justify-center"
+                className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-amber-500 border border-white dark:border-slate-900 flex items-center justify-center"
                 title="Stale Telemetry Flag"
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-white" />
@@ -85,19 +85,19 @@ export default function CityMap({
             )}
           </div>
 
-          <div className="text-center bg-white/95 dark:bg-forest-800/95 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-forest-800/10 dark:border-white/[0.08] shadow-sm space-y-0.5">
-            <h4 className="font-semibold text-xs text-forest-800 dark:text-white">{name}, {country}</h4>
+          <div className="text-center bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 shadow-sm space-y-0.5">
+            <h4 className="font-semibold text-xs text-slate-900 dark:text-white">{name}, {country}</h4>
             <div className="flex items-center justify-center gap-1.5 text-[10px]">
               <span className="font-mono tabular-nums font-bold" style={{ color }}>AQI {aqi}</span>
-              <span className="text-muted">·</span>
-              <span className="font-medium text-muted">{category}</span>
+              <span className="text-slate-400 dark:text-slate-500">·</span>
+              <span className="font-medium text-slate-600 dark:text-slate-400">{category}</span>
             </div>
           </div>
         </div>
 
         {/* Compass / Source Footer */}
-        <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1 px-2 py-0.5 rounded-md bg-white/80 dark:bg-forest-800/80 border border-forest-800/10 dark:border-white/[0.08] text-[10px] text-muted font-mono">
-          <Compass className="w-3 h-3 text-teal-500" />
+        <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1 px-2 py-0.5 rounded-md bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-white/10 text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+          <Compass className="w-3 h-3 text-teal-600 dark:text-teal-400" />
           <span>Open-Meteo Grid</span>
         </div>
       </div>

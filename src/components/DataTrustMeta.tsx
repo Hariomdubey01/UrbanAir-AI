@@ -46,7 +46,7 @@ export default function DataTrustMeta({
   }
 
   return (
-    <div className="rounded-xl bg-ivory-100/70 dark:bg-forest-900/70 border border-teal-500/20 dark:border-teal-500/20 p-3.5 space-y-2 text-xs">
+    <div className="rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80 p-3.5 space-y-2 text-xs">
       <div className="flex flex-wrap items-center justify-between gap-2">
         
         {/* Freshness Status Chip */}
@@ -62,18 +62,18 @@ export default function DataTrustMeta({
             </div>
           )}
 
-          <span className="text-[11px] text-muted font-mono">
+          <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
             {effectiveStatus !== 'unavailable' && effectiveStatus !== 'demo' ? freshnessInfo.relativeTime : ''}
           </span>
         </div>
 
         {/* Demo / Cached Disclosures */}
         {isDemo ? (
-          <span className="text-[10px] text-amber-700 dark:text-amber-300 font-sans">
+          <span className="text-[10px] text-amber-800 dark:text-amber-300 font-sans">
             Demonstration values — not live environmental measurements.
           </span>
         ) : isCached ? (
-          <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-ivory-200 dark:bg-forest-800 text-muted border border-forest-800/10 dark:border-white/[0.08]">
+          <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300 border border-slate-300 dark:border-white/10">
             Showing latest available reading
           </span>
         ) : null}
@@ -81,27 +81,27 @@ export default function DataTrustMeta({
 
       {/* Stale Warning Banner (Issue 2) */}
       {effectiveStatus === 'stale' && (
-        <div className="flex items-center gap-1.5 text-[11px] text-rose-700 dark:text-rose-300 bg-rose-500/10 px-2.5 py-1 rounded-md border border-rose-500/20">
-          <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+        <div className="flex items-center gap-1.5 text-[11px] text-rose-800 dark:text-rose-300 bg-rose-50 dark:bg-rose-500/10 px-2.5 py-1 rounded-md border border-rose-200 dark:border-rose-500/20">
+          <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-rose-600 dark:text-rose-400" />
           <span>This reading may not represent current conditions.</span>
         </div>
       )}
 
       {/* Telemetry Source & AQI Methodology Row */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1 border-t border-teal-500/10 dark:border-white/[0.05] text-[11px]">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1 border-t border-slate-200 dark:border-slate-700/80 text-[11px]">
         <div>
-          <span className="text-muted block text-[10px] uppercase tracking-wider font-semibold">Source</span>
-          <span className="font-semibold text-forest-800 dark:text-slate-200">{effectiveSource}</span>
+          <span className="text-slate-500 dark:text-slate-400 block text-[10px] uppercase tracking-wider font-semibold">Source</span>
+          <span className="font-semibold text-slate-900 dark:text-white">{effectiveSource}</span>
         </div>
 
         <div>
-          <span className="text-muted block text-[10px] uppercase tracking-wider font-semibold">AQI Methodology</span>
-          <span className="font-semibold text-forest-800 dark:text-slate-200">{aqiStandard}</span>
+          <span className="text-slate-500 dark:text-slate-400 block text-[10px] uppercase tracking-wider font-semibold">AQI Methodology</span>
+          <span className="font-semibold text-slate-900 dark:text-white">{aqiStandard}</span>
         </div>
 
         <div className="col-span-2 sm:col-span-1">
-          <span className="text-muted block text-[10px] uppercase tracking-wider font-semibold">Data Standard</span>
-          <span className="font-semibold text-teal-600 dark:text-teal-400">WHO 2021 / US EPA</span>
+          <span className="text-slate-500 dark:text-slate-400 block text-[10px] uppercase tracking-wider font-semibold">Data Standard</span>
+          <span className="font-semibold text-teal-700 dark:text-teal-400">WHO 2021 / US EPA</span>
         </div>
       </div>
     </div>
