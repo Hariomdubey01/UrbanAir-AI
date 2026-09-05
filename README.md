@@ -82,6 +82,28 @@ The platform combines:
 
 ---
 
+# 🎯 Problem Statement
+
+Urban residents often have access to air-quality measurements but may find it difficult to understand AQI values, pollutant levels, environmental standards, and what those measurements mean for sustainable urban living.
+
+Environmental information is often distributed across different sources, making it difficult for users to compare cities, interpret pollutant levels, and connect air-quality conditions with sustainable-city goals.
+
+UrbanAir AI addresses this gap by combining current environmental telemetry, deterministic AQI analysis, verified environmental knowledge, RAG-based context, and AI-powered explanations in a single platform.
+
+---
+
+# 👥 Target Users
+
+UrbanAir AI is designed for:
+
+- Urban residents who want to understand local air quality
+- Students and learners exploring environmental sustainability
+- Citizens comparing air-quality conditions across cities
+- Researchers and analysts exploring environmental information
+- Sustainability and smart-city stakeholders seeking accessible environmental context
+
+---
+
 # ✨ Key Features
 
 ### 1. Current Air-Quality Intelligence
@@ -113,9 +135,27 @@ UrbanAir AI uses the US EPA AQI methodology and supports the following six categ
 | 101–150 | Unhealthy for Sensitive Groups |
 | 151–200 | Unhealthy |
 | 201–300 | Very Unhealthy |
-| 301–500 | Hazardous |
+| 301+ | Hazardous |
 
 This approach prevents the AI layer from becoming the source of the underlying AQI calculation.
+
+---
+
+# 🤖 Why AI?
+
+Environmental data can provide measurements, but users may still need help understanding what those measurements mean.
+
+UrbanAir AI uses AI to:
+
+- Explain environmental concepts in natural language
+- Summarize complex environmental information
+- Compare air-quality conditions across locations
+- Contextualize measurements using verified knowledge
+- Answer follow-up environmental questions
+- Connect environmental information with sustainable-city concepts
+- Make environmental intelligence more accessible to non-technical users
+
+The AI layer is intentionally used for interpretation and contextualization rather than replacing deterministic environmental measurements or AQI calculations.
 
 ---
 
@@ -143,6 +183,48 @@ UrbanAir AI connects air-quality awareness with sustainable urban development.
 | **Indicator 11.6.2** | Relates to particulate matter concentrations, including PM2.5 and PM10, as an indicator of urban air quality |
 
 UrbanAir AI supports this objective by making environmental information more understandable and accessible.
+
+---
+
+# 💡 Design Thinking Approach
+
+UrbanAir AI was developed using a problem-first and user-focused design approach.
+
+### 1. Empathize
+
+Understand the challenges people face when accessing, interpreting, and comparing urban air-quality information.
+
+### 2. Define
+
+Users need a simple and accessible way to:
+
+- Understand AQI and pollutant measurements
+- Explore current environmental conditions
+- Compare air quality across cities
+- Understand environmental standards
+- Connect air-quality conditions with sustainable urban development
+
+### 3. Ideate
+
+Explore AI-assisted approaches that combine environmental telemetry, deterministic AQI analysis, trusted reference knowledge, RAG, and conversational AI.
+
+### 4. Prototype
+
+Develop UrbanAir AI as a working environmental intelligence platform featuring:
+
+- Environmental telemetry
+- AQI analysis
+- City comparison
+- Environmental insights
+- AI Environmental Advisor
+- RAG-based environmental knowledge
+- Deterministic fallback responses
+
+### 5. Test & Refine
+
+The platform was tested across functionality, API failure handling, AQI boundary conditions, AI fallback behavior, prompt-injection protection, responsive layouts, accessibility, theme switching, SEO, and production deployment.
+
+This iterative approach helped refine the platform while maintaining data integrity, usability, reliability, and responsible AI practices.
 
 ---
 
@@ -383,13 +465,13 @@ The application uses available telemetry to provide location-aware environmental
 
 The knowledge layer uses reputable environmental and sustainability references, including:
 
-**World Health Organization**
+**World Health Organization**  
 Used for health-based air-quality guideline context and pollutant reference values.
 
-**United States Environmental Protection Agency**
+**United States Environmental Protection Agency**  
 Used for AQI methodology and air-quality classification context.
 
-**United Nations Sustainable Development Goals**
+**United Nations Sustainable Development Goals**  
 Used for SDG 11 and sustainable-city contextualization.
 
 Reference knowledge is kept conceptually separate from current telemetry.
@@ -592,16 +674,16 @@ Unrelated requests should receive a concise scope-aware response rather than unn
 
 UrbanAir AI is designed to minimize unnecessary personal-data handling.
 
-**No Account Required for Core Usage**
+**No Account Required for Core Usage**  
 Normal environmental exploration does not require users to provide personally identifiable information.
 
-**Geolocation**
+**Geolocation**  
 When users choose a location through browser geolocation, coordinates are used to retrieve relevant environmental telemetry. The application does not require persistent storage of these coordinates for normal operation.
 
-**Client-Side Storage**
+**Client-Side Storage**  
 Browser storage is limited to application preferences where applicable, such as theme settings.
 
-**Feedback**
+**Feedback**  
 Feedback functionality is designed to avoid collecting unnecessary personally identifiable information.
 
 ### 📋 Security Checklist
@@ -703,7 +785,7 @@ as a server-side environment variable.
 ### 1. Clone the Repository
 
 ```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
+git clone https://github.com/Hariomdubey01/UrbanAir-AI.git
 cd urban-air-ai
 ```
 
@@ -924,23 +1006,43 @@ The goal is to keep the AI Advisor responsive while maintaining reliable environ
 
 UrbanAir AI follows several responsible-AI principles.
 
-**Groundedness**
+**Groundedness**  
 AI explanations should be based on available environmental data and relevant reference knowledge.
 
-**Transparency**
+**Transparency**  
 Measured telemetry and AI interpretation are treated as separate layers.
 
-**Reliability**
+**Reliability**  
 A deterministic fallback provides resilience when the external AI service cannot respond.
 
-**Safety**
+**Safety**  
 The system avoids medical diagnosis, secret disclosure, and unsafe instructions.
 
-**Scope Control**
+**Scope Control**  
 The AI Advisor remains focused on environmental intelligence and sustainable cities.
 
-**Data Integrity**
+**Data Integrity**  
 AI interpretation should never be treated as a replacement for the underlying environmental measurements.
+
+---
+
+# 🌍 Expected Impact
+
+UrbanAir AI aims to:
+
+- Make air-quality information easier to understand
+- Help users interpret AQI and pollutant measurements
+- Enable comparison of environmental conditions across cities
+- Increase awareness of urban air pollution
+- Connect air-quality understanding with SDG 11
+- Support more informed sustainability-oriented decisions
+- Provide accessible environmental context through conversational AI
+
+### Impact Statement
+
+If implemented more broadly, UrbanAir AI could help citizens, students, researchers, and sustainability stakeholders better understand urban environmental conditions and use reliable environmental information to support awareness and sustainability-oriented decision-making.
+
+The platform is intended as an environmental awareness and decision-support tool and does not replace official environmental monitoring, regulatory guidance, or professional medical advice.
 
 ---
 
@@ -1000,7 +1102,7 @@ By combining measured environmental telemetry, deterministic AQI analysis, verif
 
 # 👨‍💻 Author
 
-**Hariom Dubey**
+**Hariom Dubey**  
 Aspiring **Data Analyst** passionate about transforming data into meaningful business insights.
 
 ### Areas of Interest
@@ -1012,14 +1114,17 @@ Aspiring **Data Analyst** passionate about transforming data into meaningful bus
 - Python
 - Power BI
 - Machine Learning
+
 ---
+
 ## 📬 Contact
 
 | Platform | Link |
-|----------|------|
-| 📧 Email | <mailto:hariomkumard8@gmail.com> |
-| 💼 LinkedIn | [linkedin.com/in/hariom-dubey-81b752285](https://linkedin.com/in/hariom-dubey-81b752285) |
+|---|---|
+| 📧 Email | [hariomkumard8@gmail.com](mailto:hariomkumard8@gmail.com) |
+| 💼 LinkedIn | [linkedin.com/in/itzhariomdubey](https://www.linkedin.com/in/itzhariomdubey) |
 | 💻 GitHub | [github.com/Hariomdubey01](https://github.com/Hariomdubey01) |
+
 ---
 
 # 📄 License
