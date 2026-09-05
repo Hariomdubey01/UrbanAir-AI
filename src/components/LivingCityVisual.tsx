@@ -55,7 +55,7 @@ export default function LivingCityVisual({
   const effectiveStatus = isDemo ? 'demo' : effectiveStale ? 'stale' : freshnessInfo.status;
   const effectiveSource = source && source.trim() !== '' ? source : 'Source unavailable';
 
-  let statusBadgeText = '● Current environmental data';
+  let statusBadgeText = 'Current environmental data';
   let dotColor = 'bg-emerald-500';
   let textColor = 'text-emerald-700 dark:text-emerald-300';
   let badgeBorder = 'border-emerald-500/20 bg-emerald-500/10';
@@ -65,17 +65,17 @@ export default function LivingCityVisual({
     badgeBorder = 'border-amber-500/30 bg-amber-500/10';
     textColor = 'text-amber-700 dark:text-amber-300';
   } else if (effectiveStatus === 'stale') {
-    statusBadgeText = '● Stale environmental data';
+    statusBadgeText = 'Stale environmental data';
     dotColor = 'bg-rose-500';
     textColor = 'text-rose-700 dark:text-rose-300';
     badgeBorder = 'border-rose-500/20 bg-rose-500/10';
   } else if (effectiveStatus === 'recent') {
-    statusBadgeText = '● Latest available reading';
+    statusBadgeText = 'Latest available reading';
     dotColor = 'bg-amber-500';
     textColor = 'text-amber-700 dark:text-amber-300';
     badgeBorder = 'border-amber-500/20 bg-amber-500/10';
   } else if (effectiveStatus === 'unavailable') {
-    statusBadgeText = '● Data freshness unavailable';
+    statusBadgeText = 'Data freshness unavailable';
     dotColor = 'bg-muted';
     textColor = 'text-muted';
     badgeBorder = 'border-forest-800/10 bg-forest-800/5';

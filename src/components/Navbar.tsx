@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Search, Sun, Moon, Menu, X, ArrowUpRight } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 import SearchModal from './SearchModal';
+import BrandLogo from './BrandLogo';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -60,31 +61,8 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-16 sm:h-20 transition-all">
             
             {/* Brand Logo Spec §09: Single vertical bar with 2 curved airflow lines + signal dot */}
-            <Link href="/" className="flex items-center gap-3 group">
-              <div
-                className={`transition-all duration-200 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white flex items-center justify-center p-1.5 shadow-sm group-hover:scale-105 group-hover:border-emerald-500/40 ${
-                  scrolled ? 'w-6 h-6 sm:w-7 sm:h-7' : 'w-7 h-7 sm:w-8 sm:h-8'
-                }`}
-              >
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  {/* City vertical building silhouette bar */}
-                  <rect x="9" y="3" width="6" height="18" rx="1.5" className="fill-current text-emerald-500 stroke-none" />
-                  {/* Airflow curve 1 with signal dot */}
-                  <path d="M3 8.5 Q9 6 15 8.5 T21 8.5" stroke="#2dd4bf" strokeWidth="2" />
-                  <circle cx="21" cy="8.5" r="1.5" className="fill-current text-ai-500" />
-                  {/* Airflow curve 2 */}
-                  <path d="M3 15.5 Q10 17.5 16 15.5 T21 15.5" stroke="#10b981" strokeWidth="1.8" />
-                </svg>
-              </div>
-
-              <div className="flex items-baseline gap-1">
-                <span className="font-bold text-lg text-slate-900 dark:text-white tracking-tight">
-                  UrbanAir
-                </span>
-                <span className="font-normal text-sm text-slate-500 dark:text-slate-400">
-                  AI
-                </span>
-              </div>
+            <Link href="/" className="inline-flex items-center group" aria-label="UrbanAir AI Home">
+              <BrandLogo scrolled={scrolled} />
             </Link>
 
             {/* Desktop Navigation Links (§12) */}

@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { ShieldAlert, Globe, ExternalLink } from 'lucide-react';
 import { MEDICAL_REFUSAL } from '@/lib/ai/guardrails';
+import BrandLogo from './BrandLogo';
 
 export default function Footer() {
   return (
@@ -11,23 +12,8 @@ export default function Footer() {
           
           {/* Brand & SDG 11 Alignment */}
           <div className="lg:col-span-2 space-y-3">
-            <Link href="/" className="inline-flex items-center gap-3 group">
-              <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white flex items-center justify-center p-1.5 shadow-sm group-hover:scale-105 group-hover:border-emerald-500/40 transition-all duration-200">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="9" y="3" width="6" height="18" rx="1.5" className="fill-current text-emerald-500 stroke-none" />
-                  <path d="M3 8.5 Q9 6 15 8.5 T21 8.5" stroke="#2dd4bf" strokeWidth="2" />
-                  <circle cx="21" cy="8.5" r="1.5" className="fill-current text-ai-500" />
-                  <path d="M3 15.5 Q10 17.5 16 15.5 T21 15.5" stroke="#10b981" strokeWidth="1.8" />
-                </svg>
-              </div>
-              <div className="flex items-baseline gap-1">
-                <span className="font-bold text-lg text-slate-900 dark:text-white tracking-tight">
-                  UrbanAir
-                </span>
-                <span className="font-normal text-sm text-slate-500 dark:text-slate-400">
-                  AI
-                </span>
-              </div>
+            <Link href="/" className="inline-flex items-center group" aria-label="UrbanAir AI Home">
+              <BrandLogo />
             </Link>
             <p className="text-slate-600 dark:text-slate-400 text-xs leading-relaxed max-w-sm">
               Understand your city's air. UrbanAir AI transforms environmental data into clear human insights, supporting sustainable cities under UN SDG 11.
@@ -88,6 +74,19 @@ export default function Footer() {
             <span>Privacy: Local theme preferences only (No PII stored)</span>
             <span className="hidden sm:inline">·</span>
             <span>© {new Date().getFullYear()} UrbanAir AI</span>
+            <span className="hidden sm:inline">·</span>
+            <span>
+              Made by{' '}
+              <a
+                href="https://www.linkedin.com/in/itzhariomdubey"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold text-gradient-emerald hover:opacity-85 transition-opacity inline-block"
+                aria-label="Hariom Dubey on LinkedIn"
+              >
+                Hariom Dubey
+              </a>
+            </span>
           </div>
 
         </div>

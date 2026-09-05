@@ -85,12 +85,12 @@ export default function HomePage() {
               </div>
 
               {/* Editorial Large Headline (§08, §6) matching image typography & gradient accents */}
-              <h1 className="hero-title text-4xl sm:text-5xl md:text-6xl lg:text-[4rem] xl:text-[4.75rem] font-black tracking-[-0.04em] leading-[1.02] text-[#0F172A] dark:text-[#F8FAFC] [text-wrap:balance] max-w-4xl transition-colors duration-200">
-                Your city has a{' '}
-                <span className="text-gradient-emerald inline">
+              <h1 className="hero-title inline-block w-fit max-w-full text-center text-4xl sm:text-5xl md:text-6xl lg:text-[4rem] xl:text-[4.75rem] font-black tracking-[-0.04em] leading-[1.04] text-[#0F172A] dark:text-[#F8FAFC] transition-colors duration-200">
+                Your city has a<br />
+                <span className="text-gradient-emerald inline-block pb-[0.15em] pt-[0.1em] pr-[0.15em] -mr-[0.1em] align-baseline">
                   story
                 </span>{' '}
-                <span className="text-gradient-urgency-light dark:text-gradient-urgency-dark inline">
+                <span className="text-gradient-urgency-light dark:text-gradient-urgency-dark inline-block pb-[0.15em] pt-[0.1em] pr-[0.25em] -mr-[0.15em] align-baseline">
                   in its
                 </span>{' '}
                 air.

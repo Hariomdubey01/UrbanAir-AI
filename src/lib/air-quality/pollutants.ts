@@ -240,7 +240,7 @@ export function getDataFreshness(params?: {
     return {
       status: 'stale',
       label: 'Stale environmental data',
-      badgeLabel: '● Stale environmental data',
+      badgeLabel: 'Stale environmental data',
       isStale: true,
       isRecent: false,
       isCurrent: false,
@@ -256,7 +256,7 @@ export function getDataFreshness(params?: {
     return {
       status: 'recent',
       label: 'Latest available reading',
-      badgeLabel: '● Latest available reading',
+      badgeLabel: 'Latest available reading',
       isStale: false,
       isRecent: true,
       isCurrent: false,
@@ -271,7 +271,7 @@ export function getDataFreshness(params?: {
     return {
       status: 'current',
       label: 'Current environmental data',
-      badgeLabel: isCached ? '● Latest available reading' : '● Current environmental data',
+      badgeLabel: isCached ? 'Latest available reading' : 'Current environmental data',
       isStale: false,
       isRecent: false,
       isCurrent: true,
@@ -285,7 +285,7 @@ export function getDataFreshness(params?: {
   return {
     status: 'unavailable',
     label: 'Data freshness unavailable',
-    badgeLabel: '● Data freshness unavailable',
+    badgeLabel: 'Data freshness unavailable',
     isStale: false,
     isRecent: false,
     isCurrent: false,

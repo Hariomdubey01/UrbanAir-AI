@@ -26,7 +26,7 @@ export default function DataTrustMeta({
 
   let freshnessBadgeColor = 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20';
   let dotColor = 'bg-emerald-500';
-  let statusText = '● Current environmental data';
+  let statusText = 'Current environmental data';
 
   if (isDemo || effectiveStatus === 'demo') {
     freshnessBadgeColor = 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30';
@@ -34,15 +34,15 @@ export default function DataTrustMeta({
   } else if (effectiveStatus === 'stale') {
     freshnessBadgeColor = 'bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/20';
     dotColor = 'bg-rose-500';
-    statusText = '● Stale environmental data';
+    statusText = 'Stale environmental data';
   } else if (effectiveStatus === 'recent') {
     freshnessBadgeColor = 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20';
     dotColor = 'bg-amber-500';
-    statusText = '● Latest available reading';
+    statusText = 'Latest available reading';
   } else if (effectiveStatus === 'unavailable') {
     freshnessBadgeColor = 'bg-forest-800/10 text-muted border-forest-800/10';
     dotColor = 'bg-muted';
-    statusText = '● Data freshness unavailable';
+    statusText = 'Data freshness unavailable';
   }
 
   return (

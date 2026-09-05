@@ -47,7 +47,7 @@ export default function DataFreshness({
   let dotColor = 'bg-emerald-500';
   let textColor = 'text-emerald-700 dark:text-emerald-300';
   let badgeBorder = 'border-emerald-500/20 bg-emerald-500/10';
-  let statusText = '● Current environmental data';
+  let statusText = 'Current environmental data';
 
   if (effectiveStatus === 'demo') {
     badgeBorder = 'border-amber-500/30 bg-amber-500/10';
@@ -57,17 +57,17 @@ export default function DataFreshness({
     dotColor = 'bg-rose-500';
     textColor = 'text-rose-700 dark:text-rose-300';
     badgeBorder = 'border-rose-500/20 bg-rose-500/10';
-    statusText = '● Stale environmental data';
+    statusText = 'Stale environmental data';
   } else if (effectiveStatus === 'recent') {
     dotColor = 'bg-amber-500';
     textColor = 'text-amber-700 dark:text-amber-300';
     badgeBorder = 'border-amber-500/20 bg-amber-500/10';
-    statusText = '● Latest available reading';
+    statusText = 'Latest available reading';
   } else if (effectiveStatus === 'unavailable') {
     dotColor = 'bg-slate-400';
     textColor = 'text-slate-600 dark:text-slate-400';
     badgeBorder = 'border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800/50';
-    statusText = '● Data freshness unavailable';
+    statusText = 'Data freshness unavailable';
   }
 
   const ariaStatusLabel = isDemo 
