@@ -20,6 +20,9 @@
     --brand-bright: #10b981;
     --highlight-secondary: #ca8a04;
 
+    --scrollbar-track: rgba(241, 245, 249, 0.65);
+    --scrollbar-thumb: #059669;
+    --scrollbar-thumb-hover: #10b981;
     --modal-scroll-track: #F1F5F9;
     --modal-scroll-thumb: #CBD5E1;
     --modal-scroll-thumb-hover: #94A3B8;
@@ -42,6 +45,9 @@
     --brand-bright: #34d399;
     --highlight-secondary: #fbbf24;
 
+    --scrollbar-track: rgba(15, 23, 42, 0.45);
+    --scrollbar-thumb: #059669;
+    --scrollbar-thumb-hover: #10b981;
     --modal-scroll-track: rgba(15, 23, 42, 0.45);
     --modal-scroll-thumb: #334155;
     --modal-scroll-thumb-hover: #475569;
@@ -472,20 +478,33 @@
   animation: atmosphericDrift 12s ease-in-out infinite;
 }
 
-/* Custom Scrollbar - Theme Aware */
+/* Global Custom Scrollbar - Theme Aware (Firefox, Chrome, Edge, Safari) */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
 ::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--modal-scroll-track, #F1F5F9);
+  background: var(--scrollbar-track);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--modal-scroll-thumb, #CBD5E1);
-  border-radius: 4px;
+  background-color: var(--scrollbar-thumb);
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--modal-scroll-thumb-hover, #94A3B8);
+  background-color: var(--scrollbar-thumb-hover);
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 /* City Search Modal Theme-Aware Scrollbar (§10, §11, §12) */

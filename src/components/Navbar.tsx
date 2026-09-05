@@ -50,38 +50,39 @@ export default function Navbar() {
 
   return (
     <>
-      <header
-        className={`sticky top-0 z-50 transition-all duration-200 ${
-          scrolled
-            ? 'bg-[rgba(248,250,252,0.92)] dark:bg-[rgba(9,13,22,0.85)] backdrop-blur-md border-b border-slate-200 dark:border-white/10 shadow-sm dark:shadow-black/20'
-            : 'bg-[rgba(248,250,252,0.85)] dark:bg-[rgba(9,13,22,0.72)] backdrop-blur-md border-b border-slate-200/80 dark:border-white/10'
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 sm:h-20 transition-all">
-            
-            {/* Brand Logo Spec §09: Single vertical bar with 2 curved airflow lines + signal dot */}
-            <Link href="/" className="inline-flex items-center group" aria-label="UrbanAir AI Home">
-              <BrandLogo scrolled={scrolled} />
-            </Link>
+      <header className="sticky top-0 z-50 w-full pointer-events-none transition-all duration-300 pt-2.5 sm:pt-3 md:pt-3.5 px-3.5 sm:px-6 lg:px-7">
+        <div className="max-w-7xl mx-auto w-full">
+          <div
+            className={`pointer-events-auto h-[74px] sm:h-[78px] px-4 sm:px-6 rounded-[24px] sm:rounded-[26px] border transition-all duration-300 flex items-center justify-between xl:grid xl:grid-cols-[1fr_auto_1fr] ${
+              scrolled
+                ? 'bg-white/95 dark:bg-[rgba(9,13,22,0.95)] backdrop-blur-xl border-slate-300/80 dark:border-emerald-500/30 shadow-[0_14px_38px_-6px_rgba(0,0,0,0.1),0_4px_14px_-2px_rgba(0,0,0,0.05)] dark:shadow-[0_14px_45px_-8px_rgba(0,0,0,0.8),0_0_28px_-4px_rgba(16,185,129,0.2)]'
+                : 'bg-white/90 dark:bg-[rgba(9,13,22,0.88)] backdrop-blur-xl border-slate-200/80 dark:border-emerald-500/20 shadow-[0_10px_30px_-5px_rgba(0,0,0,0.06),0_4px_12px_-2px_rgba(0,0,0,0.03)] dark:shadow-[0_12px_36px_-8px_rgba(0,0,0,0.7),0_0_22px_-5px_rgba(16,185,129,0.14)]'
+            }`}
+          >
+            {/* Left side: Brand Logo */}
+            <div className="flex items-center justify-start flex-shrink-0">
+              <Link href="/" className="inline-flex items-center group" aria-label="UrbanAir AI Home">
+                <BrandLogo scrolled={scrolled} />
+              </Link>
+            </div>
 
-            {/* Desktop Navigation Links (§12) */}
-            <nav className="hidden xl:flex items-center gap-1">
+            {/* Center: Primary Desktop Navigation Links */}
+            <nav className="hidden xl:flex items-center justify-center gap-1 xl:gap-1.5" aria-label="Main Navigation">
               {navLinks.map((link) => {
                 const active = isActive(link.href);
                 return (
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-medium transition-all duration-200 whitespace-nowrap ${
                       active
-                        ? 'bg-emerald-500/10 text-emerald-700 dark:text-[#34d399] font-semibold border border-emerald-500/30 dark:border-emerald-500/20'
-                        : 'text-slate-600 dark:text-[#94a3b8] hover:text-slate-900 dark:hover:text-[#f8fafc] hover:bg-slate-200/50 dark:hover:bg-white/[0.04]'
+                        ? 'bg-emerald-500/10 text-emerald-700 dark:text-[#34d399] font-semibold border border-emerald-500/30 dark:border-emerald-500/20 shadow-sm'
+                        : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/80 dark:hover:bg-white/[0.06]'
                     }`}
                   >
                     <span>{link.name}</span>
                     {link.badge && (
-                      <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-indigo-500 text-white ml-0.5">
+                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-sm leading-none">
                         {link.badge}
                       </span>
                     )}
@@ -90,12 +91,12 @@ export default function Navbar() {
               })}
             </nav>
 
-            {/* Right Action Bar */}
-            <div className="hidden sm:flex items-center gap-2.5">
+            {/* Right side: Action Controls */}
+            <div className="flex items-center justify-end gap-2 sm:gap-2.5 flex-shrink-0">
               {/* Search Modal Trigger */}
               <button
                 onClick={() => setSearchModalOpen(true)}
-                className="p-2 rounded-xl text-slate-600 hover:text-slate-900 dark:text-[#94a3b8] dark:hover:text-[#f8fafc] hover:bg-slate-200/50 dark:hover:bg-white/[0.04] transition-colors"
+                className="w-10 h-10 rounded-full flex items-center justify-center text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white bg-slate-100/80 hover:bg-slate-200/80 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 border border-slate-200/80 dark:border-white/10 transition-all duration-200 shadow-sm hover:scale-105 active:scale-95"
                 title="Search City Air Quality"
                 aria-label="Search City Air Quality"
               >
@@ -105,94 +106,73 @@ export default function Navbar() {
               {/* Theme Toggle Button */}
               <button
                 onClick={toggleTheme}
-                className="p-2.5 rounded-xl text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-slate-800/40 transition-colors"
+                className="w-10 h-10 rounded-full flex items-center justify-center text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white bg-slate-100/80 hover:bg-slate-200/80 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 border border-slate-200/80 dark:border-white/10 transition-all duration-200 shadow-sm hover:scale-105 active:scale-95"
                 title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
                 aria-label="Toggle Theme"
               >
                 {theme === 'dark' ? (
-                  <Sun className="w-4 h-4 text-amber-400 hover:rotate-45 transition-transform" />
+                  <Sun className="w-4 h-4 text-amber-400 transition-transform duration-300 hover:rotate-45" />
                 ) : (
-                  <Moon className="w-4 h-4 text-slate-700 hover:-rotate-12 transition-transform" />
+                  <Moon className="w-4 h-4 text-slate-700 transition-transform duration-300 hover:-rotate-12" />
                 )}
               </button>
 
+              {/* Primary CTA Button */}
               <Link
                 href="/explore"
-                className="flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-2xl bg-[#10b981] hover:bg-[#34d399] text-[#052e24] shadow-[0_0_25px_-5px_rgba(16,185,129,0.4)] transition-all duration-200 hover:scale-[1.02] active:scale-[0.95]"
+                className="hidden sm:inline-flex items-center gap-1.5 h-10 px-4 sm:px-5 rounded-full bg-[#10b981] hover:bg-[#34d399] text-[#052e24] font-bold text-xs shadow-[0_4px_16px_-2px_rgba(16,185,129,0.35)] hover:shadow-[0_6px_20px_-2px_rgba(16,185,129,0.45)] transition-all duration-200 hover:scale-[1.02] active:scale-[0.97]"
               >
                 <span>Explore Cities</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </Link>
-            </div>
 
-            {/* Mobile Menu Toggle */}
-            <div className="flex xl:hidden items-center gap-2">
-              <button
-                onClick={() => setSearchModalOpen(true)}
-                className="p-2 rounded-xl text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
-                aria-label="Search"
-              >
-                <Search className="w-5 h-5" />
-              </button>
-
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded-xl text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
-                aria-label="Toggle theme"
-                title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-              >
-                {theme === 'dark' ? (
-                  <Sun className="w-5 h-5 text-amber-400" />
-                ) : (
-                  <Moon className="w-5 h-5 text-slate-700" />
-                )}
-              </button>
-
+              {/* Mobile Menu Toggle */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 rounded-xl text-slate-600 hover:text-slate-900 dark:text-slate-200 dark:hover:text-white"
+                className="xl:hidden w-10 h-10 rounded-full flex items-center justify-center text-slate-700 hover:text-slate-900 dark:text-slate-200 dark:hover:text-white bg-slate-100/80 hover:bg-slate-200/80 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 border border-slate-200/80 dark:border-white/10 transition-all duration-200 shadow-sm active:scale-95"
                 aria-label="Toggle menu"
+                aria-expanded={mobileMenuOpen}
               >
-                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
             </div>
-
           </div>
-        </div>
 
-        {/* Mobile Slide-in Drawer with exact order matching §10 */}
-        {mobileMenuOpen && (
-          <div className="xl:hidden bg-slate-50/95 dark:bg-[#090d16]/95 backdrop-blur-xl border-b border-slate-200 dark:border-white/10 px-4 pt-3 pb-6 space-y-1 shadow-2xl">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-                  isActive(link.href)
-                    ? 'bg-emerald-500/10 text-emerald-700 dark:text-[#34d399] border border-emerald-500/30 dark:border-emerald-500/20'
-                    : 'text-slate-600 dark:text-[#94a3b8] hover:text-slate-900 dark:hover:text-[#f8fafc] hover:bg-slate-200/50 dark:hover:bg-white/[0.04]'
-                }`}
-              >
-                <span>{link.name}</span>
-                {link.badge && (
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-indigo-500 text-white font-bold">
-                    {link.badge}
-                  </span>
-                )}
-              </Link>
-            ))}
-            <div className="pt-3 border-t border-slate-200 dark:border-white/10">
-              <Link
-                href="/explore"
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-full flex items-center justify-center gap-2 text-xs font-bold py-2.5 rounded-2xl bg-[#10b981] hover:bg-[#34d399] text-[#052e24] text-center shadow-[0_0_25px_-5px_rgba(16,185,129,0.4)] transition-all duration-200 hover:scale-[1.02] active:scale-[0.95]"
-              >
-                Explore Cities
-              </Link>
+          {/* Mobile Slide-in / Dropdown Drawer */}
+          {mobileMenuOpen && (
+            <div className="xl:hidden mt-2 pointer-events-auto rounded-[22px] bg-white/95 dark:bg-[rgba(9,13,22,0.95)] backdrop-blur-xl border border-slate-200/90 dark:border-emerald-500/25 p-4 space-y-1 shadow-[0_16px_40px_-8px_rgba(0,0,0,0.15)] dark:shadow-[0_16px_45px_-8px_rgba(0,0,0,0.85),0_0_24px_-4px_rgba(16,185,129,0.18)]">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                    isActive(link.href)
+                      ? 'bg-emerald-500/10 text-emerald-700 dark:text-[#34d399] border border-emerald-500/30 dark:border-emerald-500/20'
+                      : 'text-slate-600 dark:text-[#94a3b8] hover:text-slate-900 dark:hover:text-[#f8fafc] hover:bg-slate-200/50 dark:hover:bg-white/[0.04]'
+                  }`}
+                >
+                  <span>{link.name}</span>
+                  {link.badge && (
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold">
+                      {link.badge}
+                    </span>
+                  )}
+                </Link>
+              ))}
+              <div className="pt-3 border-t border-slate-200 dark:border-white/10">
+                <Link
+                  href="/explore"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full flex items-center justify-center gap-2 text-xs font-bold py-2.5 rounded-full bg-[#10b981] hover:bg-[#34d399] text-[#052e24] text-center shadow-[0_0_25px_-5px_rgba(16,185,129,0.4)] transition-all duration-200 hover:scale-[1.02] active:scale-[0.95]"
+                >
+                  <span>Explore Cities</span>
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </header>
 
       <SearchModal
