@@ -25,7 +25,7 @@ UrbanAir AI combines environmental data with responsible AI to make air quality,
 
 The landing page introduces UrbanAir AI, its environmental intelligence capabilities, and its focus on cleaner and more sustainable cities.
 
-![UrbanAir AI Home](https://github.com/Hariomdubey01/UrbanAir-AI/blob/main/Screenshots/Home.png)
+![UrbanAir AI Home](https://github.com/Hariomdubey01/UrbanAir-AI/blob/main/Screenshots/Home%20Page.png)
 
 ---
 
@@ -711,42 +711,103 @@ A simplified project structure is:
 ```text
 urban-air-ai/
 │
-├── public/
+├── Screenshots/                        # Visual preview & documentation assets
+│   ├── AI Environmental Advisor.png
+│   ├── Air Quality Dashboard.png
+│   ├── City Comparison.png
+│   ├── Home Page.png
+│   └── SDG 11.png
+│
+├── public/                             # Static assets & web manifests
+│   ├── favicon.ico                     # Application favicon
+│   ├── icon.svg                        # Vector brand emblem
+│   └── robots.txt                      # Search crawler configuration
 │
 ├── src/
-│   ├── app/
-│   │   ├── api/
-│   │   │   └── ai/
-│   │   │       └── chat/
+│   ├── app/                            # Next.js App Router (Pages & API routes)
+│   │   ├── api/                        # Backend API Endpoints
+│   │   │   ├── ai/                     # AI Advisor & Intelligence APIs
+│   │   │   │   ├── chat/route.ts       # Grounded RAG chat with fallback
+│   │   │   │   ├── compare/route.ts    # Multi-city AI synthesis comparison
+│   │   │   │   └── summary/route.ts    # Automated city brief generator
+│   │   │   ├── air-quality/            # Environmental Telemetry APIs
+│   │   │   │   ├── current/route.ts    # Live AQI, pollutants & weather data
+│   │   │   │   └── history/route.ts    # 24-hour historical pollutant telemetry
+│   │   │   ├── feedback/route.ts       # User feedback ingestion & analytics
+│   │   │   ├── health/route.ts         # Service health & telemetry latency
+│   │   │   └── location/search/route.ts# Fast fuzzy city geocoding search
 │   │   │
-│   │   ├── dashboard/
-│   │   ├── compare/
-│   │   ├── explore/
-│   │   ├── learn/
-│   │   ├── sdg11/
-│   │   ├── sources/
-│   │   ├── responsible-ai/
-│   │   └── ...
+│   │   ├── about/page.tsx              # Mission, team & methodology
+│   │   ├── advisor/page.tsx            # Dedicated AI Environmental Advisor
+│   │   ├── ai/page.tsx                 # AI assistant interface route
+│   │   ├── cities/page.tsx             # Curated global cities directory
+│   │   ├── community/page.tsx          # Local community environmental initiatives
+│   │   ├── compare/page.tsx            # Multi-city side-by-side AQI comparison
+│   │   ├── dashboard/page.tsx          # Real-time AQI dashboard & analytics
+│   │   ├── explore/page.tsx            # Interactive world map & city explorer
+│   │   ├── how-it-works/page.tsx       # Data pipeline & RAG architecture guide
+│   │   ├── impact/page.tsx             # Public health & ecological impact metrics
+│   │   ├── insights/page.tsx           # Environmental trends & data stories
+│   │   ├── learn/page.tsx              # Educational pollutant breakdown & standards
+│   │   ├── location/[id]/page.tsx      # Dynamic per-city detailed report page
+│   │   ├── responsible-ai/page.tsx     # Ethical AI policies & trust guidelines
+│   │   ├── sdg11/page.tsx              # UN Sustainable Cities (SDG 11.6) alignment
+│   │   ├── sources/page.tsx            # Telemetry verification & data provenance
+│   │   ├── globals.css                 # Custom scrollbar, themes & Tailwind styles
+│   │   ├── layout.tsx                  # Root layout (Theme, Floating Navbar, Footer)
+│   │   ├── page.tsx                    # Landing page (Hero, features, quick start)
+│   │   └── sitemap.ts                  # Automated XML sitemap generator
 │   │
-│   ├── components/
-│   │   ├── AIResponseCard.tsx
-│   │   ├── PersistentAIButton.tsx
-│   │   └── ...
+│   ├── components/                     # Reusable React & UI Components
+│   │   ├── ui/                         # Atomic micro-interactions
+│   │   │   ├── CardTilt.tsx            # 3D interactive card tilt effect
+│   │   │   ├── GlowBackground.tsx      # Ambient dynamic background gradient
+│   │   │   └── StatusDot.tsx           # Live status indicator dot
+│   │   ├── AIResponseCard.tsx          # Grounded AI answers, citations & disclaimers
+│   │   ├── AQIGauge.tsx                # Dynamic SVG AQI speedometer gauge
+│   │   ├── BrandLogo.tsx               # Scalable UrbanAir AI brand logo
+│   │   ├── CityMap.tsx                 # Interactive geographic leaflet map
+│   │   ├── CitySearchModal.tsx         # Fast fuzzy modal search for cities
+│   │   ├── ClientOnly.tsx              # Hydration boundary wrapper
+│   │   ├── ClientTime.tsx              # Client-side localized timestamp formatter
+│   │   ├── DataFreshness.tsx           # Live sensor telemetry freshness badge
+│   │   ├── DataTrustMeta.tsx           # Grounding metadata & provenance panel
+│   │   ├── ExplainabilityModal.tsx     # Model explainability & prompt transparency
+│   │   ├── FeedbackWidget.tsx          # Interactive answer feedback widget
+│   │   ├── Footer.tsx                  # Global footer with author attributions
+│   │   ├── HistoricalChart.tsx         # Responsive 24h pollutant trend graphs
+│   │   ├── LivingCityVisual.tsx        # Dynamic atmosphere & pollution visualizer
+│   │   ├── Navbar.tsx                  # Floating rounded responsive navigation bar
+│   │   ├── PersistentAIButton.tsx      # Global floating launcher for AI Advisor
+│   │   ├── PollutantCard.tsx           # Individual pollutant cards (PM2.5, NO₂, etc.)
+│   │   ├── SearchModal.tsx             # City search dialog with keyboard shortcuts
+│   │   └── ThemeProvider.tsx           # Dark / Light theme provider context
 │   │
-│   └── lib/
-│       └── ai/
-│           ├── context-engine.ts
-│           ├── retriever.ts
-│           └── validator.ts
+│   └── lib/                            # Core Business Logic & Data Pipelines
+│       ├── ai/                         # Environmental AI & RAG Engine
+│       │   ├── context-engine.ts       # Context builder fusing live telemetry & RAG
+│       │   ├── guardrails.ts           # Scope enforcement & prompt injection shield
+│       │   ├── intent-detector.ts      # Query intent classification & routing
+│       │   ├── knowledge-base.ts       # Curated domain knowledge corpus
+│       │   ├── location-resolver.ts    # Entity resolution for city names
+│       │   ├── retriever.ts            # High-precision keyword & semantic retriever
+│       │   └── validator.ts            # Output verification & safety validator
+│       ├── air-quality/                # Telemetry & AQI Calculation
+│       │   ├── normalizer.ts           # Telemetry sanitization & boundary checks
+│       │   ├── open-meteo.ts           # Real-time Open-Meteo API client
+│       │   └── pollutants.ts           # Deterministic US EPA AQI calculation engine
+│       ├── formatTime.ts               # Date & time formatting helpers
+│       └── types.ts                    # TypeScript types, interfaces & API schemas
 │
-├── .env.example
-├── .gitignore
-├── next.config.js
-├── package.json
-├── package-lock.json
-├── tailwind.config.js
-├── tsconfig.json
-└── README.md
+├── .env.example                        # Template for required environment variables
+├── .eslintrc.json                      # ESLint configuration & linting rules
+├── .gitignore                          # Git file exclusion specifications
+├── next.config.js                      # Next.js security headers & build optimizations
+├── package.json                        # Dependencies, scripts & package metadata
+├── postcss.config.js                   # PostCSS pipeline configuration
+├── tailwind.config.js                  # Tailwind CSS theme, colors & design tokens
+├── tsconfig.json                       # TypeScript compiler options & path aliases
+└── README.md                           # Comprehensive project documentation
 ```
 
 The exact structure may evolve as the application is developed.
